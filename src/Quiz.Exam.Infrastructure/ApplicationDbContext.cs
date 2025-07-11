@@ -1,9 +1,5 @@
-﻿using NetCorePal.Extensions.Repository.EntityFrameworkCore;
-using Quiz.Exam.Domain.AggregatesModel.OrderAggregate;
-using Quiz.Exam.Infrastructure.EntityConfigurations;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Quiz.Exam.Domain.AggregatesModel.DeliverAggregate;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 
@@ -30,8 +26,6 @@ namespace Quiz.Exam.Infrastructure
             base.ConfigureConventions(configurationBuilder);
         }
 
-        public DbSet<Order> Orders => Set<Order>();
-        public DbSet<DeliverRecord> DeliverRecords => Set<DeliverRecord>();
         public DbSet<User> Users => Set<User>();
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
