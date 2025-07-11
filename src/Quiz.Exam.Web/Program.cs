@@ -109,6 +109,8 @@ try
     #region Query
 
     builder.Services.AddScoped<OrderQuery>();
+    builder.Services.AddScoped<UserQuery>();
+    builder.Services.AddScoped<RoleQuery>();
 
     #endregion
 

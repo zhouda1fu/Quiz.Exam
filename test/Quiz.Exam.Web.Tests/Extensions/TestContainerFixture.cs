@@ -14,7 +14,7 @@ public class TestContainerFixture : IDisposable
 
     public MsSqlContainer MsSqlContainer { get; } = new MsSqlBuilder()
         .WithPassword("Test@123")
-        .WithDatabase("QuizExam").Build();
+        .Build();
 
     public TestContainerFixture()
     {
