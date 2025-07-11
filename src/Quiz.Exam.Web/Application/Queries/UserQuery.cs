@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using NetCorePal.Extensions.Primitives;
+using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Infrastructure;
-using NetCorePal.Extensions.Primitives;
+using Quiz.Exam.Web.Helper;
 
 namespace Quiz.Exam.Web.Application.Queries;
 
@@ -38,6 +40,18 @@ public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
                 u.LastLoginTime))
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+
+
+    public async Task<List<UserId>> GetUserIdsByRoleIdAsync(RoleId roleId, CancellationToken cancellationToken = default)
+    {
+        return await UserSet.AsNoTracking()
+            .Where(u => u.Roles.Any(r => r.RoleId == roleId))
+            .Select(u => u.Id)
+            .ToListAsync(cancellationToken);
+    }
+
+
 
     public async Task<UserInfo?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
@@ -81,6 +95,8 @@ public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
             .ToListAsync(cancellationToken);
     }
 
+
+
     public async Task<UserLoginInfo?> ValidateUserLoginAsync(string username, string password, CancellationToken cancellationToken = default)
     {
         var user = await UserSet
@@ -93,8 +109,10 @@ public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
             return null;
         }
 
+        var passwordHash = PasswordHasher.HashPassword(password);
+
         // 验证密码
-        if (!VerifyPassword(password, user.PasswordHash))
+        if (passwordHash != user.PasswordHash)
         {
             return null;
         }
@@ -102,12 +120,5 @@ public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
         return new UserLoginInfo(user.Id, user.Username, user.Email);
     }
 
-    private bool VerifyPassword(string password, string passwordHash)
-    {
-        // 这里使用简单的哈希比较，实际项目中应使用 BCrypt 或其他安全的哈希算法
-        using var sha256 = System.Security.Cryptography.SHA256.Create();
-        var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-        var hashString = Convert.ToBase64String(hashBytes);
-        return hashString == passwordHash;
-    }
-} 
+
+}

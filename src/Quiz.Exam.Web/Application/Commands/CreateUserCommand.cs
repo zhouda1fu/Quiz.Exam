@@ -3,6 +3,7 @@ using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Infrastructure.Repositories;
 using Quiz.Exam.Web.Application.Queries;
 using NetCorePal.Extensions.Primitives;
+using Quiz.Exam.Web.Helper;
 
 namespace Quiz.Exam.Web.Application.Commands;
 
@@ -27,7 +28,7 @@ public class CreateUserCommandHandler(IUserRepository userRepository) : ICommand
     public async Task<UserId> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         // 哈希密码
-        var passwordHash = HashPassword(request.Password);
+        var passwordHash = PasswordHasher.HashPassword(request.Password);
 
         // 创建用户
         var user = new User(request.Username, request.Email, passwordHash);
@@ -36,11 +37,4 @@ public class CreateUserCommandHandler(IUserRepository userRepository) : ICommand
         return user.Id;
     }
 
-    private string HashPassword(string password)
-    {
-        // 这里使用简单的哈希，实际项目中应使用 BCrypt 或其他安全的哈希算法
-        using var sha256 = System.Security.Cryptography.SHA256.Create();
-        var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-        return Convert.ToBase64String(hashBytes);
-    }
 } 

@@ -5,13 +5,14 @@ using NetCorePal.Extensions.Primitives;
 
 namespace Quiz.Exam.Web.Application.Commands;
 
-public record UpdateUserLoginTimeCommand(UserId UserId) : ICommand;
+public record UpdateUserLoginTimeCommand(UserId UserId, DateTimeOffset LoginTime) : ICommand;
 
 public class UpdateUserLoginTimeCommandValidator : AbstractValidator<UpdateUserLoginTimeCommand>
 {
     public UpdateUserLoginTimeCommandValidator()
     {
         RuleFor(x => x.UserId).NotEmpty().WithMessage("用户ID不能为空");
+        RuleFor(x => x.LoginTime).NotEmpty().WithMessage("登录时间不能为空");
     }
 }
 
@@ -25,7 +26,6 @@ public class UpdateUserLoginTimeCommandHandler(IUserRepository userRepository) :
             throw new KnownException($"用户不存在，UserId={request.UserId}");
         }
 
-        user.RecordLogin();
-        await userRepository.UpdateAsync(user, cancellationToken);
+        user.UpdateLastLoginTime(request.LoginTime);
     }
 } 

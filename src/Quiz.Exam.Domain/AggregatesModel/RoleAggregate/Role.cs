@@ -27,7 +27,6 @@ public class Role : Entity<RoleId>, IAggregateRoot
         Name = name;
         Description = description;
         IsActive = true;
-        AddDomainEvent(new RoleCreatedDomainEvent(this));
     }
 
     public void UpdateRoleInfo(string name, string description)
@@ -65,7 +64,6 @@ public class Role : Entity<RoleId>, IAggregateRoot
         }
 
         IsActive = false;
-        AddDomainEvent(new RoleDeactivatedDomainEvent(this));
     }
 
     public void Activate()
@@ -76,7 +74,6 @@ public class Role : Entity<RoleId>, IAggregateRoot
         }
 
         IsActive = true;
-        AddDomainEvent(new RoleActivatedDomainEvent(this));
     }
 
     public void Delete()
@@ -88,7 +85,6 @@ public class Role : Entity<RoleId>, IAggregateRoot
 
         IsDeleted = true;
         DeletedTime = DateTimeOffset.UtcNow;
-        AddDomainEvent(new RoleDeletedDomainEvent(this));
     }
 
     public bool HasPermission(string permissionCode)

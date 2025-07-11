@@ -25,10 +25,8 @@ public class RegisterEndpoint : Endpoint<RegisterRequest, ResponseData<RegisterR
 
     public override async Task HandleAsync(RegisterRequest req, CancellationToken ct)
     {
-        // 使用 MediatR 处理注册逻辑
         var cmd = new CreateUserCommand(req.Username, req.Email, req.Password);
         var userId = await _mediator.Send(cmd, ct);
-        
         var response = new RegisterResponse(
             userId,
             req.Username,

@@ -40,7 +40,7 @@ public class LoginEndpoint : Endpoint<LoginRequest, ResponseData<LoginResponse>>
         }
 
         // 2. 命令：更新用户登录时间
-        var updateCmd = new UpdateUserLoginTimeCommand(loginInfo.UserId);
+        var updateCmd = new UpdateUserLoginTimeCommand(loginInfo.UserId,DateTimeOffset.UtcNow);
         await _mediator.Send(updateCmd, ct);
 
         // 3. 生成JWT令牌

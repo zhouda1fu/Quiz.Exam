@@ -1,7 +1,4 @@
-using Quiz.Exam.Domain.DomainEvents.UserEvents;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
-using NetCorePal.Extensions.Domain;
-using NetCorePal.Extensions.Primitives;
 
 namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
 {
@@ -20,7 +17,6 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
             PasswordHash = passwordHash;
             IsActive = true;
             CreatedTime = DateTimeOffset.UtcNow;
-            AddDomainEvent(new UserCreatedDomainEvent(this));
         }
 
         public string Username { get; private set; } = string.Empty;
@@ -37,6 +33,12 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
         // 用户权限关系
         public virtual ICollection<UserPermission> Permissions { get; } = [];
 
+        public void UpdateRoleInfo(RoleId roleId, string roleName)
+        {
+            var savedRole = Roles.FirstOrDefault(r => r.RoleId == roleId);
+            savedRole?.UpdateRoleInfo(roleName);
+        }
+
         public void UpdatePassword(string newPasswordHash)
         {
             if (string.IsNullOrEmpty(newPasswordHash))
@@ -46,14 +48,18 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
 
             PasswordHash = newPasswordHash;
             UpdateTime = new UpdateTime(DateTimeOffset.UtcNow);
-            AddDomainEvent(new UserPasswordUpdatedDomainEvent(this));
         }
 
         public void RecordLogin()
         {
             LastLoginTime = DateTimeOffset.UtcNow;
             UpdateTime = new UpdateTime(DateTimeOffset.UtcNow);
-            AddDomainEvent(new UserLoggedInDomainEvent(this));
+        }
+
+        public void UpdateLastLoginTime(DateTimeOffset loginTime)
+        {
+            LastLoginTime = loginTime;
+            UpdateTime = new UpdateTime(DateTimeOffset.UtcNow);
         }
 
         public void Deactivate()
@@ -65,7 +71,6 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
 
             IsActive = false;
             UpdateTime = new UpdateTime(DateTimeOffset.UtcNow);
-            AddDomainEvent(new UserDeactivatedDomainEvent(this));
         }
 
         public void Activate()
@@ -77,7 +82,6 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
 
             IsActive = true;
             UpdateTime = new UpdateTime(DateTimeOffset.UtcNow);
-            AddDomainEvent(new UserActivatedDomainEvent(this));
         }
 
         // 角色管理方法
