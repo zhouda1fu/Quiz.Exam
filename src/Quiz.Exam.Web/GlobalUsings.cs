@@ -1,0 +1,9 @@
+﻿global using NetCorePal.Extensions.AspNetCore;
+global using NetCorePal.Extensions.DependencyInjection;
+global using Microsoft.Extensions.DependencyInjection;
+global using Quiz.Exam.Domain;
+global using Quiz.Exam.Infrastructure;
+global using FluentValidation;
+global using NetCorePal.Extensions.Primitives;
+global using MediatR;
+global using NetCorePal.Extensions.Domain;
