@@ -1,4 +1,4 @@
-using Testcontainers.MySql;
+using Testcontainers.MsSql;
 using Testcontainers.RabbitMq;
 using Testcontainers.Redis;
 
@@ -12,23 +12,22 @@ public class TestContainerFixture : IDisposable
     public RabbitMqContainer RabbitMqContainer { get; } = new RabbitMqBuilder()
         .WithUsername("guest").WithPassword("guest").Build();
 
-    public MySqlContainer MySqlContainer { get; } = new MySqlBuilder()
-        .WithUsername("root").WithPassword("123456")
-        .WithEnvironment("TZ", "Asia/Shanghai")
-        .WithDatabase("mysql").Build();
+    public MsSqlContainer MsSqlContainer { get; } = new MsSqlBuilder()
+        .WithPassword("Test@123")
+        .WithDatabase("QuizExam").Build();
 
     public TestContainerFixture()
     {
         Task.WhenAll(RedisContainer.StartAsync(),
             RabbitMqContainer.StartAsync(),
-            MySqlContainer.StartAsync()).Wait();
+            MsSqlContainer.StartAsync()).Wait();
     }
 
     public void Dispose()
     {
         Task.WhenAll(RedisContainer.StopAsync(),
             RabbitMqContainer.StopAsync(),
-            MySqlContainer.StopAsync()).Wait();
+            MsSqlContainer.StopAsync()).Wait();
     }
 
     public async Task CreateVisualHostAsync(string visualHost)

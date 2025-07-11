@@ -26,6 +26,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(EntityFrameworkVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(EntityFrameworkVersion)" />
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="NetCorePal.Context.AspNetCore" Version="$(NetCorePalVersion)" />
@@ -33,14 +34,12 @@
     <PackageReference Include="NetCorePal.Context.Shared" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.AspNetCore" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.DistributedLocks.Redis" Version="$(NetCorePalVersion)" />
-    <PackageReference Include="NetCorePal.Extensions.DistributedTransactions.CAP.MySql" Version="$(NetCorePalVersion)" />
+    <PackageReference Include="NetCorePal.Extensions.DistributedTransactions.CAP.SqlServer" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.MultiEnv" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.MultiEnv.CAP.RabbitMQ" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.MicrosoftServiceDiscovery" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.Primitives" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.Jwt.StackExchangeRedis" Version="$(NetCorePalVersion)" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.3.efcore.9.0.0" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft" Version="9.0.0-preview.3.efcore.9.0.0" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.2.1" />
     <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />

@@ -119,8 +119,7 @@ try
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
-        options.UseMySql(builder.Configuration.GetConnectionString("MySql"),
-            new MySqlServerVersion(new Version(8, 0, 34)));
+        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
         options.LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors();
@@ -134,7 +133,7 @@ try
         {
             b.RegisterServicesFromAssemblies(typeof(Program));
             b.AddContextIntegrationFilters();
-            b.UseMySql();
+            b.UseSqlServer();
         });
 
 

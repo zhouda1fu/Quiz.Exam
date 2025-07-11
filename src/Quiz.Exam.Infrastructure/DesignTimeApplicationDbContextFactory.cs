@@ -13,13 +13,11 @@ public class DesignTimeApplicationDbContextFactory: IDesignTimeDbContextFactory<
             c.RegisterServicesFromAssemblies(typeof(DesignTimeApplicationDbContextFactory).Assembly));
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            // change connectionstring if you want to run command “dotnet ef database update”
-            options.UseMySql("Server=any;User ID=any;Password=any;Database=any",
-                new MySqlServerVersion(new Version(8, 0, 34)),
+            // change connectionstring if you want to run command "dotnet ef database update"
+            options.UseSqlServer("Server=any;Database=any;Trusted_Connection=true;TrustServerCertificate=true;",
                 b =>
                 {
                     b.MigrationsAssembly(typeof(DesignTimeApplicationDbContextFactory).Assembly.FullName);
-                    b.UseMicrosoftJson();
                 });
         });
         var provider = services.BuildServiceProvider();

@@ -20,8 +20,8 @@ public class MyWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLif
     {
         builder.UseSetting("ConnectionStrings:Redis",
             Containers.RedisContainer.GetConnectionString() + ",defaultDatabase=0");
-        builder.UseSetting("ConnectionStrings:MySql",
-            Containers.MySqlContainer.GetConnectionString().Replace("mysql", "mysql"));
+        builder.UseSetting("ConnectionStrings:SqlServer",
+            Containers.MsSqlContainer.GetConnectionString());
         builder.UseSetting("RabbitMQ:Port", Containers.RabbitMqContainer.GetMappedPublicPort(5672).ToString());
         builder.UseSetting("RabbitMQ:UserName", "guest");
         builder.UseSetting("RabbitMQ:Password", "guest");
