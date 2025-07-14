@@ -3,7 +3,7 @@ using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Infrastructure.Repositories;
 using NetCorePal.Extensions.Primitives;
 
-namespace Quiz.Exam.Web.Application.Commands;
+namespace Quiz.Exam.Web.Application.Commands.UserCommands;
 
 public record UpdateUserLoginTimeCommand(UserId UserId, DateTimeOffset LoginTime) : ICommand;
 

@@ -1,4 +1,7 @@
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
+using System.Net.NetworkInformation;
+using System.Numerics;
+using System.Xml.Linq;
 
 namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
 {
@@ -10,26 +13,57 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
         {
         }
 
-        public User(string username, string email, string passwordHash)
+
+        public User(string name, string phone, string password, IEnumerable<UserRole> roles, IEnumerable<UserPermission> permissions, string realName, int status, string email)
         {
-            Username = username;
+            CreatedAt = DateTimeOffset.Now;
+            Name = name;
+            Phone = phone;
+            PasswordHash = password;
+            RealName = realName;
+            Status = status;
             Email = email;
-            PasswordHash = passwordHash;
-            IsActive = true;
-            CreatedTime = DateTimeOffset.UtcNow;
+            foreach (var userRole in roles)
+            {
+                Roles.Add(userRole);
+            }
+
+            foreach (var userPermission in permissions)
+            {
+                Permissions.Add(userPermission);
+            }
         }
 
-        public string Username { get; private set; } = string.Empty;
+
+
+        public void UpdateUserInfo(string name, string phone, string password, string realName, int status, string email)
+        {
+            Name = name;
+            Phone = phone;
+            PasswordHash = password;
+            RealName = realName;
+            Status = status;
+            Email = email;
+        }
+
+
+        public string Name { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
+        public string Phone { get; private set; } = string.Empty;
+
+        public string RealName { get; private set; } = string.Empty;
+
+        public int Status { get; private set; }
+
         public string PasswordHash { get; private set; } = string.Empty;
         public bool IsActive { get; private set; } = true;
-        public DateTimeOffset CreatedTime { get; private set; }
+        public DateTimeOffset CreatedAt { get; init; }
         public DateTimeOffset? LastLoginTime { get; private set; }
         public UpdateTime UpdateTime { get; private set; } = new UpdateTime(DateTimeOffset.UtcNow);
 
         // 用户角色关系
         public virtual ICollection<UserRole> Roles { get; } = [];
-        
+
         // 用户权限关系
         public virtual ICollection<UserPermission> Permissions { get; } = [];
 
@@ -183,4 +217,4 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
             return Permissions.Select(p => p.PermissionCode);
         }
     }
-} 
+}

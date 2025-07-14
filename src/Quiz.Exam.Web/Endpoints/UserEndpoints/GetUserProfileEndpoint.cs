@@ -8,7 +8,7 @@ namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
 public record GetUserProfileRequest(UserId UserId);
 
-public record UserProfileResponse(UserId UserId, string Username, string Email, bool IsActive, DateTimeOffset CreatedTime, DateTimeOffset? LastLoginTime);
+public record UserProfileResponse(UserId UserId, string Name, string Phone, IEnumerable<string> Roles, string RealName, int Status, string Email, DateTimeOffset CreatedAt);
 
 [Tags("Users")]
 [HttpGet("/api/user/profile/{userId}")]
@@ -24,7 +24,7 @@ public class GetUserProfileEndpoint : Endpoint<GetUserProfileRequest, ResponseDa
 
     public override async Task HandleAsync(GetUserProfileRequest req, CancellationToken ct)
     {
-     
+
         var userInfo = await _userQuery.GetUserByIdAsync(req.UserId, ct);
 
         if (userInfo == null)
@@ -34,13 +34,15 @@ public class GetUserProfileEndpoint : Endpoint<GetUserProfileRequest, ResponseDa
 
         var response = new UserProfileResponse(
             userInfo.UserId,
-            userInfo.Username,
+            userInfo.Name,
+            userInfo.Phone,
+            userInfo.Roles,
+            userInfo.RealName,
+            userInfo.Status,
             userInfo.Email,
-            userInfo.IsActive,
-            userInfo.CreatedTime,
-            userInfo.LastLoginTime
+            userInfo.CreatedAt
         );
-        
+
         await SendAsync(response.AsResponseData(), cancellation: ct);
     }
-} 
+}

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.DataProtection;
 using StackExchange.Redis;
 using FluentValidation.AspNetCore;
 using Quiz.Exam.Web.Application.Queries;
-using Quiz.Exam.Web.Clients;
 using Quiz.Exam.Web.Extensions;
 using FastEndpoints;
 using Serilog;
@@ -16,8 +15,6 @@ using Hangfire;
 using Hangfire.Redis.StackExchange;
 using Microsoft.AspNetCore.Http.Json;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Refit;
 #pragma warning disable S1118
 
 public partial class Program
@@ -168,20 +165,20 @@ public partial class Program
 
             #region 远程服务客户端配置
 
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                NullValueHandling = NullValueHandling.Ignore,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            };
-            jsonSerializerSettings.AddNetCorePalJsonConverters();
-            var ser = new NewtonsoftJsonContentSerializer(jsonSerializerSettings);
-            var settings = new RefitSettings(ser);
-            builder.Services.AddRefitClient<IUserServiceClient>(settings)
-                .ConfigureHttpClient(client =>
-                    client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("https+http://user:8080")!))
-                .AddMultiEnvMicrosoftServiceDiscovery() //多环境服务发现支持
-                .AddStandardResilienceHandler(); //添加标准的重试策略
+            //var jsonSerializerSettings = new JsonSerializerSettings
+            //{
+            //    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            //    NullValueHandling = NullValueHandling.Ignore,
+            //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            //};
+            //jsonSerializerSettings.AddNetCorePalJsonConverters();
+            //var ser = new NewtonsoftJsonContentSerializer(jsonSerializerSettings);
+            //var settings = new RefitSettings(ser);
+            //builder.Services.AddRefitClient<IUserServiceClient>(settings)
+            //    .ConfigureHttpClient(client =>
+            //        client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("https+http://user:8080")!))
+            //    .AddMultiEnvMicrosoftServiceDiscovery() //多环境服务发现支持
+            //    .AddStandardResilienceHandler(); //添加标准的重试策略
 
             #endregion
 

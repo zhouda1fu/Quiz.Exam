@@ -7,6 +7,8 @@ namespace Quiz.Exam.Web.Application.Queries;
 
 public record RoleInfo(RoleId Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime);
 
+public record AssignAdminUserRoleDto(RoleId RoleId, string RoleName, IEnumerable<string> PermissionCodes);
+
 public class RoleQuery(ApplicationDbContext applicationDbContext) : IQuery
 {
     private DbSet<Role> RoleSet { get; } = applicationDbContext.Roles;
@@ -16,6 +18,19 @@ public class RoleQuery(ApplicationDbContext applicationDbContext) : IQuery
         return await RoleSet.AsNoTracking()
             .AnyAsync(r => r.Name == name, cancellationToken: cancellationToken);
     }
+
+    public async Task<List<AssignAdminUserRoleDto>> GetAdminRolesForAssignmentAsync(IEnumerable<RoleId> ids,
+    CancellationToken cancellationToken)
+    {
+        return await RoleSet.AsNoTracking()
+            .Where(r => ids.Contains(r.Id))
+            .Select(r => new AssignAdminUserRoleDto(
+                r.Id,
+                r.Name,
+                r.Permissions.Select(rp => rp.PermissionCode)))
+            .ToListAsync(cancellationToken);
+    }
+
 
     public async Task<RoleInfo?> GetRoleByIdAsync(RoleId id, CancellationToken cancellationToken = default)
     {
