@@ -8,7 +8,7 @@ using Quiz.Exam.Web.Application.Queries;
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
 [Tags("Roles")]
-[HttpGet("/api/roles/{roleId}")]
+[HttpGet("/api/roles")]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class GetAllRoleEndpoint : Endpoint<RoleQueryInput, ResponseData<PagedData<RoleInfo>?>>
 {

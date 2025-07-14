@@ -18,7 +18,7 @@ public record UpdateUserRolesResponse(UserId UserId);
 
 [Tags("Users")]
 [Authorize(AuthenticationSchemes = "Bearer")]
-[HttpPut("/api/user/update")]
+[HttpPut("/api/user/update_roles")]
 public class UpdateUserRolesEndpoint : Endpoint<UpdateUserRolesRequest,ResponseData<UpdateUserRolesResponse>>
 {
 
