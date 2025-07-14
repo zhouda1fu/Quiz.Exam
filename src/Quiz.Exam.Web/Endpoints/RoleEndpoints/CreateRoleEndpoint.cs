@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
-public record CreateRoleRequest(string Name, string Description);
+public record CreateRoleRequest(string Name, string Description, IEnumerable<string> PermissionCodes);
 
 public record CreateRoleResponse(string RoleId, string Name, string Description);
 
@@ -24,7 +24,7 @@ public class CreateRoleEndpoint : Endpoint<CreateRoleRequest, ResponseData<Creat
 
     public override async Task HandleAsync(CreateRoleRequest req, CancellationToken ct)
     {
-        var cmd = new CreateRoleCommand(req.Name, req.Description);
+        var cmd = new CreateRoleCommand(req.Name, req.Description,req.PermissionCodes);
         var result = await _mediator.Send(cmd, ct);
         
         var response = new CreateRoleResponse(

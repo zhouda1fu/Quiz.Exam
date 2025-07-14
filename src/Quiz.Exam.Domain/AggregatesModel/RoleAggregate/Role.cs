@@ -1,6 +1,7 @@
-using Quiz.Exam.Domain.DomainEvents.RoleEvents;
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
+using Quiz.Exam.Domain.DomainEvents.RoleEvents;
+using System.Net.NetworkInformation;
 
 namespace Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 
@@ -14,25 +15,30 @@ public class Role : Entity<RoleId>, IAggregateRoot
 
     public string Name { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
-    public DateTimeOffset CreatedTime { get; init; }
+    public DateTimeOffset CreatedAt { get; init; }
     public bool IsActive { get; private set; } = true;
     public bool IsDeleted { get; private set; } = false;
     public DateTimeOffset? DeletedTime { get; private set; }
 
     public virtual ICollection<RolePermission> Permissions { get; init; } = [];
 
-    public Role(string name, string description)
+
+
+
+    public Role(string name, string description, IEnumerable<RolePermission> permissions)
     {
-        CreatedTime = DateTimeOffset.UtcNow;
+        CreatedAt = DateTimeOffset.Now;
         Name = name;
         Description = description;
+        Permissions = new List<RolePermission>(permissions);
         IsActive = true;
     }
 
-    public void UpdateRoleInfo(string name, string description)
+    public void UpdateRoleInfo(string name, string description,bool isActive)
     {
         Name = name;
         Description = description;
+        IsActive = isActive;
         AddDomainEvent(new RoleInfoChangedDomainEvent(this));
     }
 

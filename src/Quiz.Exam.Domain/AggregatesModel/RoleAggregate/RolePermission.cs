@@ -11,6 +11,11 @@ public class RolePermission
     public string PermissionName { get; private set; } = string.Empty;
     public string PermissionDescription { get; private set; } = string.Empty;
 
+    public RolePermission(string permissionCode)
+    {
+        PermissionCode = permissionCode;
+    }
+
     public RolePermission(string permissionCode, string permissionName, string permissionDescription)
     {
         PermissionCode = permissionCode;

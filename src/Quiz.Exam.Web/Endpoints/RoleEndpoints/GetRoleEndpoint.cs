@@ -27,11 +27,7 @@ public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResp
     {
        
         
-        var roleInfo = await _roleQuery.GetRoleByIdAsync(req.RoleId, ct);
-
-        if (roleInfo is null)
-            throw new KnownException("Invalid Credentials.");
-
+        var roleInfo = await _roleQuery.GetRoleByIdAsync(req.RoleId, ct) ?? throw new KnownException("Invalid Credentials.");
         var response = new GetRoleResponse(
             roleInfo.Id.ToString(),
             roleInfo.Name,

@@ -1,11 +1,20 @@
 using Microsoft.EntityFrameworkCore;
+using NetCorePal.Extensions.Dto;
+using NetCorePal.Extensions.Primitives;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Infrastructure;
-using NetCorePal.Extensions.Primitives;
 
 namespace Quiz.Exam.Web.Application.Queries;
 
-public record RoleInfo(RoleId Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime);
+public record RoleInfo(RoleId Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime, IEnumerable<string> PermissionCodes);
+
+public class RoleQueryInput : PageRequest 
+{
+    public string? Name { get; set; }
+    public string? Description { get; set; }
+
+    public bool? IsActive { get; set; }
+}
 
 public record AssignAdminUserRoleDto(RoleId RoleId, string RoleName, IEnumerable<string> PermissionCodes);
 
@@ -36,51 +45,20 @@ public class RoleQuery(ApplicationDbContext applicationDbContext) : IQuery
     {
         return await RoleSet.AsNoTracking()
             .Where(r => r.Id == id)
-            .Select(r => new RoleInfo(
-                r.Id,
-                r.Name,
-                r.Description,
-                r.IsActive,
-                r.CreatedTime))
+            .Select(r => new RoleInfo(r.Id, r.Name, r.Description, r.IsActive, r.CreatedAt, r.Permissions.Select(rp => rp.PermissionCode)))
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<RoleInfo?> GetRoleByNameAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<PagedData<RoleInfo>> GetAllRolesAsync(RoleQueryInput query,
+    CancellationToken cancellationToken)
     {
         return await RoleSet.AsNoTracking()
-            .Where(r => r.Name == name)
-            .Select(r => new RoleInfo(
-                r.Id,
-                r.Name,
-                r.Description,
-                r.IsActive,
-                r.CreatedTime))
-            .FirstOrDefaultAsync(cancellationToken);
+            .WhereIf(!string.IsNullOrWhiteSpace(query.Name), r => r.Name.Contains(query.Name!))
+            .WhereIf(!string.IsNullOrWhiteSpace(query.Description), r => r.Description.Contains(query.Description!))
+            .WhereIf(query.IsActive.HasValue, r => r.IsActive == query.IsActive)
+            .OrderBy(r => r.Id)
+            .Select(r => new RoleInfo(r.Id, r.Name,  r.Description, r.IsActive, r.CreatedAt, r.Permissions.Select(rp => rp.PermissionCode)))
+            .ToPagedDataAsync(query, cancellationToken);
     }
 
-    public async Task<List<RoleInfo>> GetActiveRolesAsync(CancellationToken cancellationToken = default)
-    {
-        return await RoleSet.AsNoTracking()
-            .Where(r => r.IsActive)
-            .Select(r => new RoleInfo(
-                r.Id,
-                r.Name,
-                r.Description,
-                r.IsActive,
-                r.CreatedTime))
-            .ToListAsync(cancellationToken);
-    }
-
-    public async Task<List<RoleInfo>> GetRolesByPermissionAsync(string permissionCode, CancellationToken cancellationToken = default)
-    {
-        return await RoleSet.AsNoTracking()
-            .Where(r => r.Permissions.Any(p => p.PermissionCode == permissionCode))
-            .Select(r => new RoleInfo(
-                r.Id,
-                r.Name,
-                r.Description,
-                r.IsActive,
-                r.CreatedTime))
-            .ToListAsync(cancellationToken);
-    }
 } 

@@ -4,9 +4,9 @@ using Quiz.Exam.Infrastructure.Repositories;
 using Quiz.Exam.Web.Application.Queries;
 using NetCorePal.Extensions.Primitives;
 
-namespace Quiz.Exam.Web.Application.Commands;
+namespace Quiz.Exam.Web.Application.Commands.RoleCommands;
 
-public record CreateRoleCommand(string Name, string Description) : ICommand<RoleId>;
+public record CreateRoleCommand(string Name, string Description, IEnumerable<string> PermissionCodes) : ICommand<RoleId>;
 
 public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
 {
@@ -24,9 +24,14 @@ public class CreateRoleCommandHandler(IRoleRepository roleRepository) : ICommand
     public async Task<RoleId> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
         // 创建角色
-        var role = new Role(request.Name, request.Description);
+
+        var permissions = request.PermissionCodes.Select(perm => new RolePermission(perm));
+
+        var role = new Role(request.Name, request.Description, permissions);
+
         await roleRepository.AddAsync(role, cancellationToken);
 
         return role.Id;
+
     }
-} 
+}

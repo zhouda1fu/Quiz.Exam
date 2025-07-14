@@ -10,11 +10,11 @@ public record GetActiveRolesResponse(string Id, string Name, string Description,
 [Tags("Roles")]
 [HttpGet("/api/roles/active")]
 [Authorize(AuthenticationSchemes = "Bearer")]
-public class GetActiveRolesEndpoint : EndpointWithoutRequest<ResponseData<IEnumerable<GetActiveRolesResponse>>>
+public class UpdateRoleEndpoint : EndpointWithoutRequest<ResponseData<IEnumerable<GetActiveRolesResponse>>>
 {
     private readonly RoleQuery _roleQuery;
 
-    public GetActiveRolesEndpoint(RoleQuery roleQuery)
+    public UpdateRoleEndpoint(RoleQuery roleQuery)
     {
         _roleQuery = roleQuery;
     }
