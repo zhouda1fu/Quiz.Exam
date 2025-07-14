@@ -14,7 +14,7 @@ internal class RoleEntityTypeConfiguration : IEntityTypeConfiguration<Role>
         
         builder.Property(b => b.Name).HasMaxLength(50).IsRequired();
         builder.Property(b => b.Description).HasMaxLength(200);
-        builder.Property(b => b.CreatedTime);
+        builder.Property(b => b.CreatedAt);
         builder.Property(b => b.IsActive);
         builder.Property(b => b.IsDeleted);
         builder.Property(b => b.DeletedTime);

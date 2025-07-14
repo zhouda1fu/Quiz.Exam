@@ -1,36 +1,34 @@
 using FastEndpoints;
-using Quiz.Exam.Web.Application.Queries;
-using NetCorePal.Extensions.Dto;
 using Microsoft.AspNetCore.Authorization;
+using NetCorePal.Extensions.Dto;
+using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
+using Quiz.Exam.Web.Application.Commands.RoleCommands;
+using Quiz.Exam.Web.Application.Queries;
+using Quiz.Exam.Web.Endpoints.UserEndpoints;
+using static FastEndpoints.Ep;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
-public record GetActiveRolesResponse(string Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime);
+public record UpdateRoleInfoRequest(RoleId RoleId, string Name, string Description, bool IsActive,    IEnumerable<string> PermissionCodes);
 
 [Tags("Roles")]
 [HttpGet("/api/roles/active")]
 [Authorize(AuthenticationSchemes = "Bearer")]
-public class UpdateRoleEndpoint : EndpointWithoutRequest<ResponseData<IEnumerable<GetActiveRolesResponse>>>
+public class UpdateRoleEndpoint : Endpoint<UpdateRoleInfoRequest, ResponseData<bool>>
 {
     private readonly RoleQuery _roleQuery;
+    private readonly IMediator _mediator;
 
-    public UpdateRoleEndpoint(RoleQuery roleQuery)
+    public UpdateRoleEndpoint(RoleQuery roleQuery, IMediator mediator)
     {
         _roleQuery = roleQuery;
+        _mediator = mediator;
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync(UpdateRoleInfoRequest request,CancellationToken ct)
     {
-        var roles = await _roleQuery.GetActiveRolesAsync(ct);
-        
-        var response = roles.Select(r => new GetActiveRolesResponse(
-            r.Id.ToString(),
-            r.Name,
-            r.Description,
-            r.IsActive,
-            r.CreatedTime
-        ));
-        
-        await SendAsync(response.AsResponseData(), cancellation: ct);
+        var cmd = new UpdateRoleInfoCommand(request.RoleId,request.Name,request.Description,request.IsActive,request.PermissionCodes);
+        await _mediator.Send(cmd, ct);
+        await SendAsync(true.AsResponseData(), cancellation: ct);
     }
 } 

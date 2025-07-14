@@ -3,6 +3,7 @@ using Quiz.Exam.Web.Application.Commands;
 using NetCorePal.Extensions.Dto;
 using Microsoft.AspNetCore.Authorization;
 using MediatR;
+using Quiz.Exam.Web.Application.Commands.RoleCommands;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
