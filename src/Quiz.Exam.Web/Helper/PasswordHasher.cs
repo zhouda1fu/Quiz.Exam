@@ -35,5 +35,27 @@ namespace Quiz.Exam.Web.Helper
             return result;
         }
 
+
+        public static bool VerifyHashedPassword(string password, string storePassword)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentNullException(nameof(password));
+            }
+
+            if (string.IsNullOrEmpty(storePassword))
+            {
+                throw new ArgumentNullException(nameof(storePassword));
+            }
+
+            var parts = storePassword.Split('.');
+            var salt = parts[0];
+            var hash = parts[1];
+
+            return Validate(password, salt, hash);
+        }
+
+        private static bool Validate(string password, string salt, string hash) => HashPassword(password, salt) == hash;
+
     }
 }

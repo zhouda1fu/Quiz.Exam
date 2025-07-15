@@ -17,8 +17,6 @@ public record RegisterRequest(string Name, string Email, string Password, string
 public record RegisterResponse(UserId UserId, string Name, string Email);
 
 [Tags("Users")]
-[HttpPost("/api/user/register")]
-[AllowAnonymous]
 public class RegisterEndpoint : Endpoint<RegisterRequest, ResponseData<RegisterResponse>>
 {
     private readonly IMediator _mediator;
@@ -30,12 +28,18 @@ public class RegisterEndpoint : Endpoint<RegisterRequest, ResponseData<RegisterR
         _roleQuery = roleQuery;
     }
 
+    public override void Configure()
+    {
+        Post("/api/user/register");
+        AllowAnonymous();
+    }
+
     public override async Task HandleAsync(RegisterRequest request, CancellationToken ct)
     {
 
         var rolesToBeAssigned = await _roleQuery.GetAdminRolesForAssignmentAsync(request.RoleIds, ct);
 
-        // ¹þÏ£ÃÜÂë
+        // å“ˆå¸Œå¯†ç 
         var passwordHash = PasswordHasher.HashPassword(request.Password);
         var cmd = new CreateUserCommand(request.Name, request.Email, passwordHash, request.Phone, request.RealName, request.Status, rolesToBeAssigned);
         var userId = await _mediator.Send(cmd, ct);

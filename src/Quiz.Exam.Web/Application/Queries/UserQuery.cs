@@ -11,6 +11,8 @@ public record UserInfo(UserId UserId, string Name, string Phone, IEnumerable<str
 
 public record UserLoginInfo(UserId UserId, string Name, string Email, string PasswordHash);
 
+
+
 public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
 {
     private DbSet<User> UserSet { get; } = applicationDbContext.Users;
@@ -35,6 +37,16 @@ public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+
+    public async Task<List<string>> GetAssignedPermissionCode(UserId id,
+    CancellationToken cancellationToken)
+    {
+        return await UserSet.AsNoTracking()
+            .Where(au => au.Id == id)
+            .SelectMany(au => au.Permissions)
+            .Select(aup => aup.PermissionCode)
+            .ToListAsync(cancellationToken);
+    }
 
 
     public async Task<List<UserId>> GetUserIdsByRoleIdAsync(RoleId roleId, CancellationToken cancellationToken = default)

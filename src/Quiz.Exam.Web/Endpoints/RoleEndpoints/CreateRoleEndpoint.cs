@@ -1,9 +1,10 @@
-using FastEndpoints;
 using Quiz.Exam.Web.Application.Commands;
 using NetCorePal.Extensions.Dto;
 using Microsoft.AspNetCore.Authorization;
 using MediatR;
 using Quiz.Exam.Web.Application.Commands.RoleCommands;
+using Quiz.Exam.Web.Const;
+using FastEndpoints;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
@@ -12,8 +13,6 @@ public record CreateRoleRequest(string Name, string Description, IEnumerable<str
 public record CreateRoleResponse(string RoleId, string Name, string Description);
 
 [Tags("Roles")]
-[HttpPost("/api/roles")]
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class CreateRoleEndpoint : Endpoint<CreateRoleRequest, ResponseData<CreateRoleResponse>>
 {
     private readonly IMediator _mediator;
@@ -21,6 +20,13 @@ public class CreateRoleEndpoint : Endpoint<CreateRoleRequest, ResponseData<Creat
     public CreateRoleEndpoint(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    public override void Configure()
+    {
+        Post("/api/roles");
+        AuthSchemes("Bearer");
+        Permissions(AppPermissions.RoleCreate);
     }
 
     public override async Task HandleAsync(CreateRoleRequest req, CancellationToken ct)

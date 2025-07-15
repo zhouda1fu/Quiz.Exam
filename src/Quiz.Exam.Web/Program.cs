@@ -1,20 +1,23 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Prometheus;
-using System.Reflection;
-using System.Text.Json;
-using Microsoft.AspNetCore.DataProtection;
-using StackExchange.Redis;
-using FluentValidation.AspNetCore;
-using Quiz.Exam.Web.Application.Queries;
-using Quiz.Exam.Web.Extensions;
 using FastEndpoints;
-using Serilog;
-using Serilog.Formatting.Json;
+using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.Redis.StackExchange;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Prometheus;
+using Quiz.Exam.Web.Application.Queries;
+using Quiz.Exam.Web.Configuration;
+using Quiz.Exam.Web.Extensions;
+using Serilog;
+using Serilog.Formatting.Json;
+using StackExchange.Redis;
+using System.Reflection;
+using System.Text.Json;
+using System.Linq;
 #pragma warning disable S1118
 
 public partial class Program
@@ -60,13 +63,16 @@ public partial class Program
             builder.Services.AddAuthentication().AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters.ValidAudience = "netcorepal";
+                options.TokenValidationParameters.ValidAudience = "audience-y";
                 options.TokenValidationParameters.ValidateAudience = true;
-                options.TokenValidationParameters.ValidIssuer = "netcorepal";
+                options.TokenValidationParameters.ValidIssuer = "issuer-x";
                 options.TokenValidationParameters.ValidateIssuer = true;
             });
             builder.Services.AddNetCorePalJwt().AddRedisStore();
-
+            
+            // 添加内存缓存
+            builder.Services.AddMemoryCache();
+            
             #endregion
 
             #region Controller
@@ -83,6 +89,10 @@ public partial class Program
             builder.Services.AddFastEndpoints();
             builder.Services.Configure<JsonOptions>(o =>
                 o.SerializerOptions.AddNetCorePalJsonConverters());
+
+
+            builder.Services.Configure<AppConfiguration>(builder.Configuration.GetSection("AppConfiguration"));
+          
 
             #endregion
 
@@ -209,7 +219,10 @@ public partial class Program
             app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
+            
+
 
             app.MapControllers();
             app.UseFastEndpoints();

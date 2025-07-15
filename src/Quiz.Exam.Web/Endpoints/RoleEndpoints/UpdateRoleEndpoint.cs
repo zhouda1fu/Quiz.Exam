@@ -4,6 +4,7 @@ using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Web.Application.Commands.RoleCommands;
 using Quiz.Exam.Web.Application.Queries;
+using Quiz.Exam.Web.Const;
 using Quiz.Exam.Web.Endpoints.UserEndpoints;
 using static FastEndpoints.Ep;
 
@@ -12,7 +13,7 @@ namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 public record UpdateRoleInfoRequest(RoleId RoleId, string Name, string Description, bool IsActive,    IEnumerable<string> PermissionCodes);
 
 [Tags("Roles")]
-[HttpGet("/api/roles/active")]
+[HttpPut("/api/roles/{roleId}")]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class UpdateRoleEndpoint : Endpoint<UpdateRoleInfoRequest, ResponseData<bool>>
 {

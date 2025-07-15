@@ -1,9 +1,8 @@
 using FastEndpoints;
-using Microsoft.AspNetCore.Authorization;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
-using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Queries;
+using Quiz.Exam.Web.Const;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
@@ -12,8 +11,6 @@ public record GetRoleRequest(RoleId RoleId);
 public record GetRoleResponse(string Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime);
 
 [Tags("Roles")]
-[HttpGet("/api/roles/{roleId}")]
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResponse?>>
 {
     private readonly RoleQuery _roleQuery;
@@ -23,10 +20,15 @@ public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResp
         _roleQuery = roleQuery;
     }
 
+    public override void Configure()
+    {
+        Get("/api/roles/{roleId}");
+        AuthSchemes("Bearer");
+        Permissions(AppPermissions.RoleRead);
+    }
+
     public override async Task HandleAsync(GetRoleRequest req, CancellationToken ct)
     {
-       
-        
         var roleInfo = await _roleQuery.GetRoleByIdAsync(req.RoleId, ct) ?? throw new KnownException("Invalid Credentials.");
         var response = new GetRoleResponse(
             roleInfo.Id.ToString(),
@@ -37,6 +39,5 @@ public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResp
         );
 
         await SendAsync(response.AsResponseData(), cancellation: ct);
-
     }
 } 

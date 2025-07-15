@@ -7,6 +7,7 @@ using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Commands;
 using Quiz.Exam.Web.Application.Commands.UserCommands;
 using Quiz.Exam.Web.Application.Queries;
+using Quiz.Exam.Web.Const;
 using Quiz.Exam.Web.Helper;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
@@ -17,8 +18,6 @@ public record UpdateUserRolesRequest(UserId UserId, IEnumerable<RoleId> RoleIds)
 public record UpdateUserRolesResponse(UserId UserId);
 
 [Tags("Users")]
-[Authorize(AuthenticationSchemes = "Bearer")]
-[HttpPut("/api/user/update_roles")]
 public class UpdateUserRolesEndpoint : Endpoint<UpdateUserRolesRequest,ResponseData<UpdateUserRolesResponse>>
 {
 
@@ -29,6 +28,13 @@ public class UpdateUserRolesEndpoint : Endpoint<UpdateUserRolesRequest,ResponseD
     {
         _mediator = mediator;
         _roleQuery = roleQuery;
+    }
+
+    public override void Configure()
+    {
+        Put("/api/user/{userId}/roles");
+        AuthSchemes("Bearer");
+        Permissions(AppPermissions.UserRoleAssign);
     }
 
     public override async Task HandleAsync(UpdateUserRolesRequest request, CancellationToken ct)
