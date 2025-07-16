@@ -141,7 +141,7 @@ public class UserIntegrationTests : IClassFixture<MyWebApplicationFactory>
 
         // Act - 分配角色
         var updateRolesRequest = new { RoleIds = new[] { roleId } };
-        var response = await _client.PutAsJsonAsync($"/api/user/{userId}/roles", updateRolesRequest);
+        var response = await _client.PutAsJsonAsync($"/api/user/update_roles", updateRolesRequest);
 
         // Assert
         Assert.True(response.IsSuccessStatusCode);

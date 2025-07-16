@@ -20,7 +20,7 @@
           />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable>
+          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable style="width: 200px;"> 
             <el-option label="启用" :value="1" />
             <el-option label="禁用" :value="0" />
           </el-select>
@@ -28,7 +28,7 @@
         <el-form-item>
           <el-button type="primary" @click="handleSearch">
             <el-icon><Search /></el-icon>
-            搜索
+            搜索 
           </el-button>
           <el-button @click="handleReset">重置</el-button>
         </el-form-item>
@@ -199,7 +199,7 @@ const roleSubmitLoading = ref(false)
 const dialogVisible = ref(false)
 const roleDialogVisible = ref(false)
 const isEdit = ref(false)
-const currentUserId = ref('')
+const currentUserId = ref<string>('')
 const currentUser = ref<any>(null)
 
 const users = ref<UserInfo[]>([])
@@ -395,8 +395,9 @@ const handleRoleSubmit = async () => {
   
   try {
     roleSubmitLoading.value = true
-    await updateUserRoles(currentUser.value.userId, {
-      roleIds: selectedRoleIds.value
+    await updateUserRoles({
+      roleIds: selectedRoleIds.value.map(Number),
+      userId: currentUser.value.userId
     })
     ElMessage.success('角色分配成功')
     roleDialogVisible.value = false

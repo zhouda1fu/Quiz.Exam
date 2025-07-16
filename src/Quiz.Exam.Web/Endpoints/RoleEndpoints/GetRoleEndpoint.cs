@@ -9,7 +9,7 @@ namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
 public record GetRoleRequest(RoleId RoleId);
 
-public record GetRoleResponse(string Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime);
+public record GetRoleResponse(RoleId Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime);
 
 [Tags("Roles")]
 public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResponse?>>
@@ -32,7 +32,7 @@ public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResp
     {
         var roleInfo = await _roleQuery.GetRoleByIdAsync(req.RoleId, ct) ?? throw new KnownException("Invalid Credentials.");
         var response = new GetRoleResponse(
-            roleInfo.Id.ToString(),
+            roleInfo.RoleId,
             roleInfo.Name,
             roleInfo.Description,
             roleInfo.IsActive,

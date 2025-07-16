@@ -61,13 +61,13 @@
       <!-- 分页 -->
       <div class="pagination-wrapper">
         <el-pagination
-          v-model:current="pagination.pageIndex"
+          v-model:current-page="pagination.pageIndex"
           v-model:page-size="pagination.pageSize"
           :total="pagination.total"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @update:page-size="handleSizeChange"
+          @update:current-page="handleCurrentChange"
         />
       </div>
     </el-card>
@@ -187,7 +187,7 @@ const loadRoles = async () => {
       keyword: searchForm.keyword
     })
     roles.value = response.data.items
-    pagination.total = response.data.totalCount
+    pagination.total = response.data.total
   } catch (error) {
     ElMessage.error('加载角色列表失败')
   } finally {

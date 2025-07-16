@@ -20,7 +20,7 @@ export interface RoleQueryInput {
 // 分页数据
 export interface PagedData<T> {
   items: T[]
-  totalCount: number
+  total: number
   pageIndex: number
   pageSize: number
 }
