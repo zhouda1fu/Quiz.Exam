@@ -69,10 +69,24 @@ public partial class Program
                 options.TokenValidationParameters.ValidateIssuer = true;
             });
             builder.Services.AddNetCorePalJwt().AddRedisStore();
-            
+
             // 添加内存缓存
             builder.Services.AddMemoryCache();
-            
+
+            #endregion
+
+            #region CORS
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             #endregion
 
             #region Controller
@@ -92,7 +106,7 @@ public partial class Program
 
 
             builder.Services.Configure<AppConfiguration>(builder.Configuration.GetSection("AppConfiguration"));
-          
+
 
             #endregion
 
@@ -104,7 +118,7 @@ public partial class Program
 
             #region 集成事件
 
-           // builder.Services.AddTransient<OrderPaidIntegrationEventHandler>();
+            // builder.Services.AddTransient<OrderPaidIntegrationEventHandler>();
 
             #endregion
 
@@ -220,9 +234,13 @@ public partial class Program
             app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            // 添加 CORS 中间件
+            app.UseCors("AllowAll");
+
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
 
 
             app.MapControllers();
