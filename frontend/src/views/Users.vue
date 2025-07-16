@@ -190,7 +190,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { register, updateUser, updateUserRoles, type RegisterRequest } from '@/api/user'
+import { register, updateUser, updateUserRoles, getUsers, deleteUser, type RegisterRequest, type UserInfo } from '@/api/user'
 import { getAllRoles, type RoleInfo } from '@/api/role'
 
 const loading = ref(false)
@@ -202,8 +202,8 @@ const isEdit = ref(false)
 const currentUserId = ref('')
 const currentUser = ref<any>(null)
 
-const users = ref<any[]>([])
-const selectedUsers = ref<any[]>([])
+const users = ref<UserInfo[]>([])
+const selectedUsers = ref<UserInfo[]>([])
 const allRoles = ref<RoleInfo[]>([])
 const selectedRoleIds = ref<string[]>([])
 
@@ -252,47 +252,19 @@ const userRules: FormRules = {
 
 const dialogTitle = computed(() => isEdit.value ? '编辑用户' : '新建用户')
 
-// 模拟用户数据
-const mockUsers = [
-  {
-    userId: '1',
-    name: 'admin',
-    email: 'admin@example.com',
-    realName: '管理员',
-    phone: '13800138000',
-    status: 1,
-    roles: ['管理员'],
-    createdAt: '2024-01-01T00:00:00Z'
-  },
-  {
-    userId: '2',
-    name: 'user1',
-    email: 'user1@example.com',
-    realName: '张三',
-    phone: '13800138001',
-    status: 1,
-    roles: ['普通用户'],
-    createdAt: '2024-01-02T00:00:00Z'
-  }
-]
-
 const loadUsers = async () => {
   loading.value = true
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
-    users.value = mockUsers.filter(user => {
-      if (searchForm.keyword) {
-        return user.name.includes(searchForm.keyword) || user.email.includes(searchForm.keyword)
-      }
-      if (searchForm.status !== null) {
-        return user.status === searchForm.status
-      }
-      return true
+    const response = await getUsers({
+      pageIndex: pagination.pageIndex,
+      pageSize: pagination.pageSize,
+      keyword: searchForm.keyword || undefined,
+      status: searchForm.status || undefined
     })
-    pagination.total = users.value.length
-  } catch (error) {
-    ElMessage.error('加载用户列表失败')
+    users.value = response.data.items
+    pagination.total = response.data.total
+  } catch (error: any) {
+    ElMessage.error(error.response?.data?.message || '加载用户列表失败')
   } finally {
     loading.value = false
   }
@@ -333,7 +305,7 @@ const handleCurrentChange = (page: number) => {
   loadUsers()
 }
 
-const handleSelectionChange = (selection: any[]) => {
+const handleSelectionChange = (selection: UserInfo[]) => {
   selectedUsers.value = selection
 }
 
@@ -352,7 +324,7 @@ const showCreateDialog = () => {
   dialogVisible.value = true
 }
 
-const handleEdit = (user: any) => {
+const handleEdit = (user: UserInfo) => {
   isEdit.value = true
   currentUserId.value = user.userId
   Object.assign(userForm, {
@@ -367,7 +339,7 @@ const handleEdit = (user: any) => {
   dialogVisible.value = true
 }
 
-const handleRoles = (user: any) => {
+const handleRoles = (user: UserInfo) => {
   currentUser.value = user
   selectedRoleIds.value = user.roles.map((role: string) => {
     const foundRole = allRoles.value.find(r => r.name === role)
@@ -376,18 +348,21 @@ const handleRoles = (user: any) => {
   roleDialogVisible.value = true
 }
 
-const handleDelete = async (user: any) => {
+const handleDelete = async (user: UserInfo) => {
   try {
     await ElMessageBox.confirm(`确定要删除用户"${user.name}"吗？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     })
-    // TODO: 调用删除API
+    
+    await deleteUser(user.userId)
     ElMessage.success('删除成功')
     loadUsers()
-  } catch {
-    // 用户取消
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '删除失败')
+    }
   }
 }
 

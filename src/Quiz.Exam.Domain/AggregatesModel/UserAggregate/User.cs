@@ -1,3 +1,4 @@
+using NetCorePal.Extensions.Domain;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using System.Net.NetworkInformation;
 using System.Numerics;
@@ -12,6 +13,32 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
         protected User()
         {
         }
+
+
+
+
+        public string Name { get; private set; } = string.Empty;
+        public string Email { get; private set; } = string.Empty;
+        public string Phone { get; private set; } = string.Empty;
+
+        public string RealName { get; private set; } = string.Empty;
+
+        public int Status { get; private set; }
+
+        public string PasswordHash { get; private set; } = string.Empty;
+        public bool IsActive { get; private set; } = true;
+        public DateTimeOffset CreatedAt { get; init; }
+        public DateTimeOffset? LastLoginTime { get; private set; }
+        public UpdateTime UpdateTime { get; private set; } = new UpdateTime(DateTimeOffset.UtcNow);
+
+        public bool IsDeleted { get; private set; }
+        public DateTimeOffset? DeletedAt { get; private set; }
+
+        // 用户角色关系
+        public virtual ICollection<UserRole> Roles { get; } = [];
+
+        // 用户权限关系
+        public virtual ICollection<UserPermission> Permissions { get; } = [];
 
 
         public User(string name, string phone, string password, IEnumerable<UserRole> roles, IEnumerable<UserPermission> permissions, string realName, int status, string email)
@@ -35,6 +62,12 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
         }
 
 
+        public void Delete()
+        {
+            if (IsDeleted) throw new KnownException("用户已经被删除！");
+            IsDeleted = true;
+            DeletedAt = DateTimeOffset.Now;
+        }
 
         public void UpdateUserInfo(string name, string phone, string password, string realName, int status, string email)
         {
@@ -45,27 +78,6 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
             Status = status;
             Email = email;
         }
-
-
-        public string Name { get; private set; } = string.Empty;
-        public string Email { get; private set; } = string.Empty;
-        public string Phone { get; private set; } = string.Empty;
-
-        public string RealName { get; private set; } = string.Empty;
-
-        public int Status { get; private set; }
-
-        public string PasswordHash { get; private set; } = string.Empty;
-        public bool IsActive { get; private set; } = true;
-        public DateTimeOffset CreatedAt { get; init; }
-        public DateTimeOffset? LastLoginTime { get; private set; }
-        public UpdateTime UpdateTime { get; private set; } = new UpdateTime(DateTimeOffset.UtcNow);
-
-        // 用户角色关系
-        public virtual ICollection<UserRole> Roles { get; } = [];
-
-        // 用户权限关系
-        public virtual ICollection<UserPermission> Permissions { get; } = [];
 
         public void UpdateRoleInfo(RoleId roleId, string roleName)
         {
@@ -106,6 +118,8 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
             IsActive = false;
             UpdateTime = new UpdateTime(DateTimeOffset.UtcNow);
         }
+
+
 
         public void Activate()
         {

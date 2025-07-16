@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
@@ -12,6 +13,12 @@ namespace Quiz.Exam.Web.Application.Queries;
 public record UserInfo(UserId UserId, string Name, string Phone, IEnumerable<string> Roles, string RealName, int Status, string Email, DateTimeOffset CreatedAt);
 
 public record UserLoginInfo(UserId UserId, string Name, string Email, string PasswordHash);
+
+public class UserQueryInput : PageRequest
+{
+    public string? Keyword { get; set; }
+    public int? Status { get; set; }
+}
 
 public class UserQuery(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache) : IQuery
 {
@@ -78,5 +85,34 @@ public class UserQuery(ApplicationDbContext applicationDbContext, IMemoryCache m
     {
         var cacheKey = $"{CacheKeys.UserPermissions}:{userId}";
         memoryCache.Remove(cacheKey);
+    }
+
+    public async Task<PagedData<UserInfo>> GetAllUsersAsync(UserQueryInput query, CancellationToken cancellationToken)
+    {
+        var queryable = UserSet.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(query.Keyword))
+        {
+            queryable = queryable.Where(u => u.Name.Contains(query.Keyword!) || u.Email.Contains(query.Keyword!));
+        }
+
+        if (query.Status.HasValue)
+        {
+            queryable = queryable.Where(u => u.Status == query.Status);
+        }
+
+        return await queryable
+            .OrderByDescending(u => u.CreatedAt)
+            .Where(u => u.IsDeleted)
+            .Select(u => new UserInfo(
+                u.Id,
+                u.Name,
+                u.Phone,
+                u.Roles.Select(r => r.RoleName),
+                u.RealName,
+                u.Status,
+                u.Email,
+                u.CreatedAt))
+            .ToPagedDataAsync(query, cancellationToken);
     }
 }

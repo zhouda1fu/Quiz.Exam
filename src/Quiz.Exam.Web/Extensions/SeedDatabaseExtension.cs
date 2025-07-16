@@ -52,7 +52,18 @@ public static class SeedDatabaseExtension
                 "13800138000",
                 PasswordHasher.HashPassword("123456"),
                 new List<UserRole> { new UserRole(adminRole.Id, adminRole.Name) },
-                new List<UserPermission> { new UserPermission(AppPermissions.UserUpdate, adminRole.Id) },
+                new List<UserPermission> { 
+                    new UserPermission(AppPermissions.UserUpdate, adminRole.Id),
+                    new UserPermission(AppPermissions.UserRead, adminRole.Id),
+                    new UserPermission(AppPermissions.UserList, adminRole.Id),
+                    new UserPermission(AppPermissions.UserCreate, adminRole.Id),
+                    new UserPermission(AppPermissions.UserDelete, adminRole.Id),
+                    new UserPermission(AppPermissions.RoleCreate, adminRole.Id),
+                    new UserPermission(AppPermissions.RoleRead, adminRole.Id),
+                    new UserPermission(AppPermissions.RoleUpdate, adminRole.Id),
+                    new UserPermission(AppPermissions.RoleDelete, adminRole.Id),
+                    new UserPermission(AppPermissions.RoleList, adminRole.Id)
+                },
                 "系统管理员",
                 1,
                 "admin@example.com"

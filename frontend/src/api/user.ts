@@ -75,4 +75,39 @@ export interface UpdateUserRolesRequest {
 
 export const updateUserRoles = (userId: string, data: UpdateUserRolesRequest) => {
   return api.put(`/user/${userId}/roles`, data)
+}
+
+// 获取用户列表
+export interface GetUsersRequest {
+  pageIndex: number
+  pageSize: number
+  keyword?: string
+  status?: number
+}
+
+export interface UserInfo {
+  userId: string
+  name: string
+  email: string
+  phone: string
+  roles: string[]
+  realName: string
+  status: number
+  createdAt: string
+}
+
+export interface GetUsersResponse {
+  items: UserInfo[]
+  total: number
+  pageIndex: number
+  pageSize: number
+}
+
+export const getUsers = (params: GetUsersRequest) => {
+  return api.get<GetUsersResponse>('/users', { params })
+}
+
+// 删除用户
+export const deleteUser = (userId: string) => {
+  return api.delete(`/users/${userId}`)
 } 
