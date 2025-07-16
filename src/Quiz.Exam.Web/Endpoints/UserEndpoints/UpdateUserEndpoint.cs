@@ -34,6 +34,7 @@ public class UpdateUserEndpoint : Endpoint<UpdateUserRequest, ResponseData<Updat
     {
         Put("/api/user/update");
         AuthSchemes("Bearer");
+        // FastEndpoints 会自动从 JWT claims 中验证权限
         Permissions(AppPermissions.UserUpdate);
     }
 

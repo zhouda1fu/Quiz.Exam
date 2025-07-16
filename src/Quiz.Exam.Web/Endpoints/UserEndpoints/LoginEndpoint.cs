@@ -46,6 +46,8 @@ public class LoginEndpoint : Endpoint<LoginRequest, ResponseData<LoginResponse>>
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
+
+       
         // 1. 查询：验证用户凭据
         var loginInfo = await _userQuery.GetUserInfoForLoginAsync(req.Username, ct) ?? throw new KnownException("无效的用户");
         var passwordHash = PasswordHasher.HashPassword(req.Password);
@@ -70,14 +72,19 @@ public class LoginEndpoint : Endpoint<LoginRequest, ResponseData<LoginResponse>>
             new Claim("name", loginInfo.Name),
             new Claim("email", loginInfo.Email),
             new Claim("sub", loginInfo.UserId.ToString()),
-            new Claim("user_id", loginInfo.UserId.ToString()),
+            new Claim("user_id", loginInfo.UserId.ToString())
         };
 
-        foreach (var permissionCode in assignedPermissionCode)
+        // 添加权限到 claims，FastEndpoints 会自动处理权限验证
+        if (assignedPermissionCode != null)
         {
-            claims.Add(new Claim("permission", permissionCode));
+            foreach (var permissionCode in assignedPermissionCode)
+            {
+                claims.Add(new Claim("permissions", permissionCode));
+            }
         }
 
+        // 使用 FastEndpoints 的 JWT 生成方式
         var token = await _jwtProvider.GenerateJwtToken(
             new JwtData("issuer-x", "audience-y", claims, nowTime.DateTime, tokenExpiryTime.DateTime));
 

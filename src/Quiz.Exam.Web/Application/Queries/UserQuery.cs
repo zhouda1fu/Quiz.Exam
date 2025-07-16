@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using NetCorePal.Extensions.Primitives;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Infrastructure;
+using Quiz.Exam.Web.Const;
 using Quiz.Exam.Web.Helper;
 
 namespace Quiz.Exam.Web.Application.Queries;
@@ -11,9 +13,7 @@ public record UserInfo(UserId UserId, string Name, string Phone, IEnumerable<str
 
 public record UserLoginInfo(UserId UserId, string Name, string Email, string PasswordHash);
 
-
-
-public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
+public class UserQuery(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache) : IQuery
 {
     private DbSet<User> UserSet { get; } = applicationDbContext.Users;
 
@@ -37,17 +37,22 @@ public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-
-    public async Task<List<string>> GetAssignedPermissionCode(UserId id,
+    public async Task<List<string>?> GetAssignedPermissionCode(UserId id,
     CancellationToken cancellationToken)
     {
-        return await UserSet.AsNoTracking()
-            .Where(au => au.Id == id)
-            .SelectMany(au => au.Permissions)
-            .Select(aup => aup.PermissionCode)
-            .ToListAsync(cancellationToken);
-    }
+        var cacheKey = $"{CacheKeys.UserPermissions}:{id}";
+        var userPermissions = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+            return await UserSet.AsNoTracking()
+                .Where(au => au.Id == id)
+                .SelectMany(au => au.Permissions)
+                .Select(aup => aup.PermissionCode)
+                .ToListAsync(cancellationToken);
+        });
 
+        return userPermissions;
+    }
 
     public async Task<List<UserId>> GetUserIdsByRoleIdAsync(RoleId roleId, CancellationToken cancellationToken = default)
     {
@@ -57,7 +62,6 @@ public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
             .ToListAsync(cancellationToken);
     }
 
-
     public async Task<UserLoginInfo?> GetUserInfoForLoginAsync(string name, CancellationToken cancellationToken)
     {
         return await UserSet
@@ -66,4 +70,13 @@ public class UserQuery(ApplicationDbContext applicationDbContext) : IQuery
         .FirstOrDefaultAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// 清除用户权限缓存
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    public void ClearUserPermissionCache(UserId userId)
+    {
+        var cacheKey = $"{CacheKeys.UserPermissions}:{userId}";
+        memoryCache.Remove(cacheKey);
+    }
 }

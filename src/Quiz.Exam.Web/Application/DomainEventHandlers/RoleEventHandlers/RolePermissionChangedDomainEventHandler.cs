@@ -24,7 +24,7 @@ public class RolePermissionsChangedDomainEventHandler(
 
         foreach (var userId in userIds)
         {
-            memoryCache.Remove($"{CacheKeys.AdminUserPermissions}:{userId}");
+            memoryCache.Remove($"{CacheKeys.UserPermissions}:{userId}");
             await mediator.Send(new UpdateUserRolePermissionsCommand(userId, roleId, permissionCodes),
                 cancellationToken);
         }
