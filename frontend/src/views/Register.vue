@@ -145,29 +145,29 @@ const validateConfirmPassword = (rule: any, value: string, callback: any) => {
 
 const registerRules: FormRules = {
   name: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度在 3 到 20 个字符', trigger: 'blur' }
+    { required: true, message: '请输入用户名', trigger: 'onBlur' },
+    { min: 3, max: 20, message: '用户名长度在 3 到 20 个字符', trigger: 'onBlur' }
   ],
   email: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    { required: true, message: '请输入邮箱', trigger: 'onBlur' },
+    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'onBlur' }
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+    { required: true, message: '请输入密码', trigger: 'onBlur' },
+    { min: 6, message: '密码长度不能少于6位', trigger: 'onBlur' }
   ],
   confirmPassword: [
-    { required: true, validator: validateConfirmPassword, trigger: 'blur' }
+    { required: true, validator: validateConfirmPassword, trigger: 'onBlur' }
   ],
   realName: [
-    { required: true, message: '请输入真实姓名', trigger: 'blur' }
+    { required: true, message: '请输入真实姓名', trigger: 'onBlur' }
   ],
   phone: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
+    { required: true, message: '请输入手机号', trigger: 'onBlur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'onBlur' }
   ],
   roleIds: [
-    { required: true, message: '请选择角色', trigger: 'change' }
+    { required: true, message: '请选择角色', trigger: 'onChange' }
   ]
 }
 

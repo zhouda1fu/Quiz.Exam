@@ -89,8 +89,8 @@
           :total="pagination.total"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @update:page-size="handleSizeChange"
+          @update:current-page="handleCurrentChange"
         />
       </div>
     </el-card>
@@ -167,7 +167,7 @@
             <el-checkbox
               v-for="role in allRoles"
               :key="role.roleId"
-              :label="role.roleId"
+              :value="role.roleId"
             >
               {{ role.name }}
             </el-checkbox>
@@ -232,21 +232,21 @@ const userFormRef = ref<FormInstance>()
 
 const userRules: FormRules = {
   name: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
+    { required: true, message: '请输入用户名', trigger: 'onBlur' }
   ],
   email: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    { required: true, message: '请输入邮箱', trigger: 'onBlur' },
+    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'onBlur' }
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+    { required: true, message: '请输入密码', trigger: 'onBlur' },
+    { min: 6, message: '密码长度不能少于6位', trigger: 'onBlur' }
   ],
   realName: [
-    { required: true, message: '请输入真实姓名', trigger: 'blur' }
+    { required: true, message: '请输入真实姓名', trigger: 'onBlur' }
   ],
   phone: [
-    { required: true, message: '请输入手机号', trigger: 'blur' }
+    { required: true, message: '请输入手机号', trigger: 'onBlur' }
   ]
 }
 

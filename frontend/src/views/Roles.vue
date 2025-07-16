@@ -61,7 +61,7 @@
       <!-- 分页 -->
       <div class="pagination-wrapper">
         <el-pagination
-          v-model:current-page="pagination.pageIndex"
+          v-model:current="pagination.pageIndex"
           v-model:page-size="pagination.pageSize"
           :total="pagination.total"
           :page-sizes="[10, 20, 50, 100]"
@@ -103,7 +103,7 @@
             <el-checkbox
               v-for="permission in permissions"
               :key="permission.code"
-              :label="permission.code"
+              :value="permission.code"
             >
               {{ permission.name }}
             </el-checkbox>
@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { getAllRoles, createRole, updateRole, type RoleInfo, type CreateRoleRequest } from '@/api/role'
 
@@ -157,10 +157,10 @@ const roleFormRef = ref<FormInstance>()
 
 const roleRules: FormRules = {
   name: [
-    { required: true, message: '请输入角色名称', trigger: 'blur' }
+    { required: true, message: '请输入角色名称', trigger: 'onBlur' }
   ],
   description: [
-    { required: true, message: '请输入角色描述', trigger: 'blur' }
+    { required: true, message: '请输入角色描述', trigger: 'onBlur' }
   ]
 }
 

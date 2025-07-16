@@ -103,7 +103,7 @@ public class UserQuery(ApplicationDbContext applicationDbContext, IMemoryCache m
 
         return await queryable
             .OrderByDescending(u => u.CreatedAt)
-            .Where(u => u.IsDeleted)
+            .Where(u => !u.IsDeleted)
             .Select(u => new UserInfo(
                 u.Id,
                 u.Name,

@@ -95,18 +95,18 @@ const profileForm = reactive({
 
 const profileRules: FormRules = {
   name: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
+    { required: true, message: '请输入用户名', trigger: 'onBlur' }
   ],
   email: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    { required: true, message: '请输入邮箱', trigger: 'onBlur' },
+    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'onBlur' }
   ],
   realName: [
-    { required: true, message: '请输入真实姓名', trigger: 'blur' }
+    { required: true, message: '请输入真实姓名', trigger: 'onBlur' }
   ],
   phone: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
+    { required: true, message: '请输入手机号', trigger: 'onBlur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'onBlur' }
   ]
 }
 
