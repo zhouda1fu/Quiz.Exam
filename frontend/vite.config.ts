@@ -14,8 +14,12 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5058',
-        changeOrigin: true,
+        target: 'https://localhost:7058',
+        changeOrigin: true,// 解决跨域和安全问题
+        secure: false,//禁用 SSL 证书验证（开发环境中的自签名证书）
+        headers: {
+          'Connection': 'keep-alive'
+        },
       },
     },
   },
