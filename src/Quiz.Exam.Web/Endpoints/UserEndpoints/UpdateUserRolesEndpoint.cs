@@ -1,5 +1,6 @@
 using Azure.Core;
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
@@ -33,7 +34,7 @@ public class UpdateUserRolesEndpoint : Endpoint<UpdateUserRolesRequest,ResponseD
     public override void Configure()
     {
         Put("/api/user/{userId}/roles");
-        AuthSchemes("Bearer");
+        AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         Permissions(AppPermissions.UserRoleAssign);
     }
 

@@ -1,5 +1,6 @@
 using Azure.Core;
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
@@ -33,7 +34,7 @@ public class UpdateUserEndpoint : Endpoint<UpdateUserRequest, ResponseData<Updat
     public override void Configure()
     {
         Put("/api/user/update");
-        AuthSchemes("Bearer");
+        AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         // FastEndpoints 会自动从 JWT claims 中验证权限
         Permissions(AppPermissions.UserUpdate);
     }

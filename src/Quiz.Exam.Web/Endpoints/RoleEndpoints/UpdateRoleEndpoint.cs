@@ -1,4 +1,5 @@
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
@@ -13,8 +14,6 @@ namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 public record UpdateRoleInfoRequest(RoleId RoleId, string Name, string Description, bool IsActive,    IEnumerable<string> PermissionCodes);
 
 [Tags("Roles")]
-[HttpPut("/api/roles/{roleId}")]
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class UpdateRoleEndpoint : Endpoint<UpdateRoleInfoRequest, ResponseData<bool>>
 {
     private readonly RoleQuery _roleQuery;
@@ -24,6 +23,13 @@ public class UpdateRoleEndpoint : Endpoint<UpdateRoleInfoRequest, ResponseData<b
     {
         _roleQuery = roleQuery;
         _mediator = mediator;
+    }
+
+    public override void Configure()
+    {
+        Put("/api/roles/update");
+        AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
+        Permissions(AppPermissions.RoleCreate);
     }
 
     public override async Task HandleAsync(UpdateRoleInfoRequest request,CancellationToken ct)

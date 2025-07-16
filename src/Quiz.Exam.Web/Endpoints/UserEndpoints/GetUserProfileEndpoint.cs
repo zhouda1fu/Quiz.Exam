@@ -1,4 +1,5 @@
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Queries;
@@ -23,7 +24,7 @@ public class GetUserProfileEndpoint : Endpoint<GetUserProfileRequest, ResponseDa
     public override void Configure()
     {
         Get("/api/user/profile/{userId}");
-        AuthSchemes("Bearer");
+        AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         Permissions(AppPermissions.UserRead);
     }
 

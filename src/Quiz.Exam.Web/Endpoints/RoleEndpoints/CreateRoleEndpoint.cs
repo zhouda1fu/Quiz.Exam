@@ -1,10 +1,11 @@
-using Quiz.Exam.Web.Application.Commands;
-using NetCorePal.Extensions.Dto;
-using Microsoft.AspNetCore.Authorization;
+using FastEndpoints;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using NetCorePal.Extensions.Dto;
+using Quiz.Exam.Web.Application.Commands;
 using Quiz.Exam.Web.Application.Commands.RoleCommands;
 using Quiz.Exam.Web.Const;
-using FastEndpoints;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
@@ -25,7 +26,7 @@ public class CreateRoleEndpoint : Endpoint<CreateRoleRequest, ResponseData<Creat
     public override void Configure()
     {
         Post("/api/roles");
-        AuthSchemes("Bearer");
+        AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         Permissions(AppPermissions.RoleCreate);
     }
 

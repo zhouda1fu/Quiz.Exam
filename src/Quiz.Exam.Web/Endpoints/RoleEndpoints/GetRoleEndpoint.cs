@@ -1,4 +1,5 @@
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Web.Application.Queries;
@@ -23,7 +24,7 @@ public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResp
     public override void Configure()
     {
         Get("/api/roles/{roleId}");
-        AuthSchemes("Bearer");
+        AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         Permissions(AppPermissions.RoleRead);
     }
 
