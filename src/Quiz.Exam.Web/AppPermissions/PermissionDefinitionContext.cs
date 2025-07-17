@@ -20,7 +20,7 @@ namespace Quiz.Exam.Web.AppPermissions
             adminUserManagement.AddChild(PermissionCodes.UserEdit, "编辑用户");
             adminUserManagement.AddChild(PermissionCodes.UserDelete, "删除用户");
             adminUserManagement.AddChild(PermissionCodes.UserView, "查看用户");
-            adminUserManagement.AddChild(PermissionCodes.UserRoleAssign, "更新用户角色");
+            adminUserManagement.AddChild(PermissionCodes.UserRoleAssign, "分配用户角色");
             var roleManagement = systemAccess.AddPermission(PermissionCodes.RoleManagement, "角色管理");
             roleManagement.AddChild(PermissionCodes.RoleCreate, "创建角色");
             roleManagement.AddChild(PermissionCodes.RoleEdit, "编辑角色");

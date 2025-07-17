@@ -14,7 +14,7 @@ export interface RoleInfo {
 export interface RoleQueryInput {
   pageIndex: number
   pageSize: number
-  keyword?: string
+  name?: string
 }
 
 // 分页数据
@@ -56,6 +56,7 @@ export const createRole = (data: CreateRoleRequest) => {
 
 // 更新角色
 export interface UpdateRoleRequest {
+  roleId: string
   name: string
   description: string
   permissionCodes: string[]
@@ -67,6 +68,6 @@ export const deleteRole = (roleId: string) => {
   return api.delete(`/roles/${roleId}`)
 } 
 
-export const updateRole = (roleId: string, data: UpdateRoleRequest) => {
-  return api.put(`/roles/${roleId}`, data)
+export const updateRole = (data: UpdateRoleRequest) => {
+  return api.put('/roles/update', data)
 } 

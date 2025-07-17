@@ -8,7 +8,7 @@ using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
-public record UpdateRoleInfoRequest(RoleId RoleId, string Name, string Description, bool IsActive,    IEnumerable<string> PermissionCodes);
+public record UpdateRoleInfoRequest(RoleId RoleId, string Name, string Description, IEnumerable<string> PermissionCodes);
 
 [Tags("Roles")]
 public class UpdateRoleEndpoint : Endpoint<UpdateRoleInfoRequest, ResponseData<bool>>
@@ -27,10 +27,10 @@ public class UpdateRoleEndpoint : Endpoint<UpdateRoleInfoRequest, ResponseData<b
         Permissions(PermissionCodes.RoleCreate);
     }
 
-    public override async Task HandleAsync(UpdateRoleInfoRequest request,CancellationToken ct)
+    public override async Task HandleAsync(UpdateRoleInfoRequest request, CancellationToken ct)
     {
-        var cmd = new UpdateRoleInfoCommand(request.RoleId,request.Name,request.Description,request.IsActive,request.PermissionCodes);
+        var cmd = new UpdateRoleInfoCommand(request.RoleId, request.Name, request.Description,  request.PermissionCodes);
         await _mediator.Send(cmd, ct);
         await SendAsync(true.AsResponseData(), cancellation: ct);
     }
-} 
+}

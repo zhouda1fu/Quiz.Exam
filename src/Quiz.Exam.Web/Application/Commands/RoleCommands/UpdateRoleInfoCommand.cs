@@ -4,7 +4,7 @@ using Quiz.Exam.Web.Application.Queries;
 
 namespace Quiz.Exam.Web.Application.Commands.RoleCommands
 {
-    public record UpdateRoleInfoCommand(RoleId RoleId, string Name, string Description, bool IsActive,
+    public record UpdateRoleInfoCommand(RoleId RoleId, string Name, string Description, 
         IEnumerable<string> PermissionCodes) : ICommand;
 
     public class UpdateRoleInfoCommandValidator : AbstractValidator<UpdateRoleInfoCommand>
@@ -13,9 +13,6 @@ namespace Quiz.Exam.Web.Application.Commands.RoleCommands
         {
             RuleFor(x => x.RoleId).NotEmpty();
             RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => new { x.Name, x.RoleId }).MustAsync(async (r, ct) =>
-                !await roleQuery.DoesRoleExist(r.Name,ct)
-            );
         }
     }
 
@@ -25,7 +22,7 @@ namespace Quiz.Exam.Web.Application.Commands.RoleCommands
         {
             var role = await roleRepository.GetAsync(request.RoleId, cancellationToken) ??
                        throw new KnownException($"未找到角色，RoleId = {request.RoleId}");
-            role.UpdateRoleInfo(request.Name, request.Description, request.IsActive);
+            role.UpdateRoleInfo(request.Name, request.Description);
 
             // 更新角色权限
             var permissions = request.PermissionCodes.Select(perm => new RolePermission(perm));

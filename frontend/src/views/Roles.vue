@@ -139,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 
 import { getAllRoles, createRole, updateRole, deleteRole, type RoleInfo, type CreateRoleRequest } from '@/api/role'
@@ -201,7 +201,6 @@ const loadPermissionTree = async () => {
       isEnabled: true,
       children: group.permissions
     }))
-    console.log('permissionTreeData', permissionTreeData.value)
   } catch (error) {
     ElMessage.error('加载权限数据失败')
   }
@@ -215,7 +214,7 @@ const loadRoles = async () => {
     const response = await getAllRoles({
       pageIndex: pagination.pageIndex,
       pageSize: pagination.pageSize,
-      keyword: searchForm.keyword
+      name: searchForm.keyword
     })
     roles.value = response.data.items
     pagination.total = response.data.total
@@ -255,7 +254,6 @@ const handleSelectionChange = (selection: RoleInfo[]) => {
 const handlePermissionCheck = (data: PermissionItem, checkedInfo: any) => {
   // 获取所有选中的权限码
   const checkedKeys = checkedInfo.checkedKeys || []
-  console.log('checkedKeys', checkedKeys)
   
   // 只使用完全选中的权限码，不包含半选中的父节点
   roleForm.permissionCodes = checkedKeys
@@ -268,6 +266,13 @@ const showCreateDialog = () => {
   roleForm.description = ''
   roleForm.permissionCodes = []
   dialogVisible.value = true
+  
+  // 等待DOM更新后清空树的选中状态
+  nextTick(() => {
+    if (permissionTreeRef.value) {
+      permissionTreeRef.value.setCheckedKeys([])
+    }
+  })
 }
 
 const handleEdit = (role: RoleInfo) => {
@@ -277,6 +282,13 @@ const handleEdit = (role: RoleInfo) => {
   roleForm.description = role.description
   roleForm.permissionCodes = role.permissionCodes || []
   dialogVisible.value = true
+  
+  // 等待DOM更新后设置树的选中状态
+  nextTick(() => {
+    if (permissionTreeRef.value) {
+      permissionTreeRef.value.setCheckedKeys(roleForm.permissionCodes)
+    }
+  })
 }
 
 const handleDelete = async (role: RoleInfo) => {
@@ -302,7 +314,10 @@ const handleSubmit = async () => {
     submitLoading.value = true
     
     if (isEdit.value) {
-      await updateRole(currentRoleId.value, roleForm)
+      await updateRole({
+        roleId: currentRoleId.value,
+        ...roleForm
+      })
       ElMessage.success('更新成功')
     } else {
       await createRole(roleForm)
@@ -320,6 +335,10 @@ const handleSubmit = async () => {
 
 const handleDialogClose = () => {
   roleFormRef.value?.resetFields()
+  // 清空树的选中状态
+  if (permissionTreeRef.value) {
+    permissionTreeRef.value.setCheckedKeys([])
+  }
 }
 
 const formatDate = (dateString: string) => {

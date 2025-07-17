@@ -25,6 +25,8 @@ public static class SeedDatabaseExtension
                 new RolePermission(PermissionCodes.RoleView, "查看角色", "查看角色信息"),
                 new RolePermission(PermissionCodes.RoleEdit, "更新角色", "更新角色信息"),
                 new RolePermission(PermissionCodes.RoleDelete, "删除角色", "删除角色"),
+                new RolePermission(PermissionCodes.UserRoleAssign, "分配用户角色", "分配用户角色权限"),
+                new RolePermission(PermissionCodes.RoleUpdatePermissions, "更新角色权限", "更新角色的权限")
             };
             
             var userPermissions = new List<RolePermission>

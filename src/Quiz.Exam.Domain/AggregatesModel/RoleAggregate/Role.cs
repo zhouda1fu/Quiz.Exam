@@ -34,11 +34,10 @@ public class Role : Entity<RoleId>, IAggregateRoot
         IsActive = true;
     }
 
-    public void UpdateRoleInfo(string name, string description,bool isActive)
+    public void UpdateRoleInfo(string name, string description)
     {
         Name = name;
         Description = description;
-        IsActive = isActive;
         AddDomainEvent(new RoleInfoChangedDomainEvent(this));
     }
 
