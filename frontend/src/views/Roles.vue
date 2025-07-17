@@ -126,7 +126,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { getAllRoles, createRole, updateRole, type RoleInfo, type CreateRoleRequest } from '@/api/role'
+import { getAllRoles, createRole, updateRole, deleteRole, type RoleInfo, type CreateRoleRequest } from '@/api/role'
 
 const loading = ref(false)
 const submitLoading = ref(false)
