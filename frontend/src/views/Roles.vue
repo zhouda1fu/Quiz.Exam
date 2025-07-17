@@ -76,7 +76,7 @@
     <el-dialog
       v-model="dialogVisible"
       :title="dialogTitle"
-      width="600px"
+      width="800px"
       @close="handleDialogClose"
     >
       <el-form
@@ -99,15 +99,30 @@
         </el-form-item>
         
         <el-form-item label="权限" prop="permissionCodes">
-          <el-checkbox-group v-model="roleForm.permissionCodes">
-            <el-checkbox
-              v-for="permission in permissions"
-              :key="permission.code"
-              :value="permission.code"
+          <div class="permission-tree-container">
+            <!-- 全选/取消全选按钮 -->
+            <div class="permission-tree-header">
+              <el-button size="small" @click="handleSelectAll">全选</el-button>
+              <el-button size="small" @click="handleUnselectAll">取消全选</el-button>
+            </div>
+            
+            <el-tree
+              ref="permissionTreeRef"
+              :data="permissionTreeData"
+              :props="treeProps"
+              :default-checked-keys="roleForm.permissionCodes"
+              show-checkbox
+              node-key="code"
+              @check="handlePermissionCheck"
             >
-              {{ permission.name }}
-            </el-checkbox>
-          </el-checkbox-group>
+              <template #default="{ node, data }">
+                <span class="permission-node">
+                  <span class="permission-name">{{ data.displayName }}</span>
+                  <el-tag v-if="!data.isEnabled" size="small" type="danger">已禁用</el-tag>
+                </span>
+              </template>
+            </el-tree>
+          </div>
         </el-form-item>
       </el-form>
       
@@ -126,7 +141,9 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
+
 import { getAllRoles, createRole, updateRole, deleteRole, type RoleInfo, type CreateRoleRequest } from '@/api/role'
+import { getPermissionTree, type PermissionGroup, type PermissionItem } from '@/api/permission'
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -136,6 +153,8 @@ const currentRoleId = ref('')
 
 const roles = ref<RoleInfo[]>([])
 const selectedRoles = ref<RoleInfo[]>([])
+const permissionTreeData = ref<PermissionItem[]>([])
+const permissionTreeRef = ref()
 
 const searchForm = reactive({
   keyword: ''
@@ -164,19 +183,31 @@ const roleRules: FormRules = {
   ]
 }
 
-// 模拟权限数据
-const permissions = ref([
-  { code: 'user.read', name: '用户查看' },
-  { code: 'user.create', name: '用户创建' },
-  { code: 'user.update', name: '用户更新' },
-  { code: 'user.delete', name: '用户删除' },
-  { code: 'role.read', name: '角色查看' },
-  { code: 'role.create', name: '角色创建' },
-  { code: 'role.update', name: '角色更新' },
-  { code: 'role.delete', name: '角色删除' }
-])
+const treeProps = {
+  children: 'children',
+  label: 'displayName'
+}
 
 const dialogTitle = computed(() => isEdit.value ? '编辑角色' : '新建角色')
+
+// 加载权限树数据
+const loadPermissionTree = async () => {
+  try {
+    const response = await getPermissionTree()
+    // 将权限组转换为树形数据，保持组结构
+    permissionTreeData.value = response.data.map(group => ({
+      code: group.name,
+      displayName: group.name,
+      isEnabled: true,
+      children: group.permissions
+    }))
+    console.log('permissionTreeData', permissionTreeData.value)
+  } catch (error) {
+    ElMessage.error('加载权限数据失败')
+  }
+}
+
+
 
 const loadRoles = async () => {
   loading.value = true
@@ -221,6 +252,15 @@ const handleSelectionChange = (selection: RoleInfo[]) => {
   selectedRoles.value = selection
 }
 
+const handlePermissionCheck = (data: PermissionItem, checkedInfo: any) => {
+  // 获取所有选中的权限码
+  const checkedKeys = checkedInfo.checkedKeys || []
+  console.log('checkedKeys', checkedKeys)
+  
+  // 只使用完全选中的权限码，不包含半选中的父节点
+  roleForm.permissionCodes = checkedKeys
+}
+
 const showCreateDialog = () => {
   isEdit.value = false
   currentRoleId.value = ''
@@ -246,7 +286,6 @@ const handleDelete = async (role: RoleInfo) => {
       cancelButtonText: '取消',
       type: 'warning'
     })
-    // TODO: 调用删除API
     await deleteRole(role.roleId)
     ElMessage.success('删除成功')
     loadRoles()
@@ -287,8 +326,33 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleString('zh-CN')
 }
 
+// 递归获取所有权限码
+const getAllPermissionCodes = (items: PermissionItem[]): string[] => {
+  const codes: string[] = []
+  items.forEach(item => {
+    if (item.children && item.children.length > 0) {
+      codes.push(...getAllPermissionCodes(item.children))
+    } else {
+      codes.push(item.code)
+    }
+  })
+  return codes
+}
+
+const handleSelectAll = () => {
+  const allCodes = getAllPermissionCodes(permissionTreeData.value)
+  permissionTreeRef.value?.setCheckedKeys(allCodes)
+  roleForm.permissionCodes = allCodes
+}
+
+const handleUnselectAll = () => {
+  permissionTreeRef.value?.setCheckedKeys([])
+  roleForm.permissionCodes = []
+}
+
 onMounted(() => {
   loadRoles()
+  loadPermissionTree()
 })
 </script>
 
@@ -320,5 +384,31 @@ onMounted(() => {
 
 .dialog-footer {
   text-align: right;
+}
+
+.permission-tree-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.permission-tree-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.permission-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.permission-name {
+  flex: 1;
 }
 </style> 
