@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Commands.UserCommands;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
@@ -24,7 +24,7 @@ public class DeleteUserEndpoint : Endpoint<DeleteUserRequest, ResponseData<bool>
     {
         Delete("/api/users");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
-        Permissions(AppPermissions.UserDelete);
+        Permissions(PermissionCodes.UserDelete);
     }
 
     public override async Task HandleAsync(DeleteUserRequest req, CancellationToken ct)

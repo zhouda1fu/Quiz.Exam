@@ -5,7 +5,7 @@ using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Commands.UserCommands;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
@@ -24,7 +24,7 @@ public class DeleteRoleEndpoint : EndpointWithoutRequest<ResponseData<bool>>
     {
         Delete("/api/roles/{roleId}");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
-        Permissions(AppPermissions.UserDelete);
+        Permissions(PermissionCodes.UserDelete);
     }
 
     public override async Task HandleAsync(CancellationToken ct)

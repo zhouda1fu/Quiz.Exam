@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Queries;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
@@ -25,7 +25,7 @@ public class GetUserProfileEndpoint : Endpoint<GetUserProfileRequest, ResponseDa
     {
         Get("/api/user/profile/{userId}");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
-        Permissions(AppPermissions.UserRead);
+        Permissions(PermissionCodes.UserView);
     }
 
     public override async Task HandleAsync(GetUserProfileRequest req, CancellationToken ct)

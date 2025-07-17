@@ -6,7 +6,7 @@ using Quiz.Exam.Infrastructure;
 
 namespace Quiz.Exam.Web.Application.Queries;
 
-public record RoleQueryDto(RoleId RoleId, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime, IEnumerable<string> PermissionCodes);
+public record RoleQueryDto(RoleId RoleId, string Name, string Description, bool IsActive, DateTimeOffset CreatedAt, IEnumerable<string> PermissionCodes);
 
 public class RoleQueryInput : PageRequest 
 {

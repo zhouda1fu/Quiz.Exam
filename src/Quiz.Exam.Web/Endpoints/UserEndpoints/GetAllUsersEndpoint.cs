@@ -2,7 +2,7 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Web.Application.Queries;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
@@ -30,7 +30,7 @@ public class GetAllUsersEndpoint : Endpoint<GetAllUsersRequest, ResponseData<Get
     {
         Get("/api/users");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
-        Permissions(AppPermissions.UserList);
+        Permissions(PermissionCodes.UserView);
     }
 
     public override async Task HandleAsync(GetAllUsersRequest req, CancellationToken ct)

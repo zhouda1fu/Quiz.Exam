@@ -1,6 +1,6 @@
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 using Quiz.Exam.Web.Helper;
 
 namespace Quiz.Exam.Web.Extensions;
@@ -17,22 +17,20 @@ public static class SeedDatabaseExtension
         {
             var adminPermissions = new List<RolePermission>
             {
-                new RolePermission(AppPermissions.UserCreate, "创建用户", "创建新用户"),
-                new RolePermission(AppPermissions.UserRead, "查看用户", "查看用户信息"),
-                new RolePermission(AppPermissions.UserUpdate, "更新用户", "更新用户信息"),
-                new RolePermission(AppPermissions.UserDelete, "删除用户", "删除用户"),
-                new RolePermission(AppPermissions.UserList, "用户列表", "查看用户列表"),
-                new RolePermission(AppPermissions.RoleCreate, "创建角色", "创建新角色"),
-                new RolePermission(AppPermissions.RoleRead, "查看角色", "查看角色信息"),
-                new RolePermission(AppPermissions.RoleUpdate, "更新角色", "更新角色信息"),
-                new RolePermission(AppPermissions.RoleDelete, "删除角色", "删除角色"),
-                new RolePermission(AppPermissions.RoleList, "角色列表", "查看角色列表")
+                new RolePermission(PermissionCodes.UserCreate, "创建用户", "创建新用户"),
+                new RolePermission(PermissionCodes.UserView, "查看用户", "查看用户信息"),
+                new RolePermission(PermissionCodes.UserEdit, "更新用户", "更新用户信息"),
+                new RolePermission(PermissionCodes.UserDelete, "删除用户", "删除用户"),
+                new RolePermission(PermissionCodes.RoleCreate, "创建角色", "创建新角色"),
+                new RolePermission(PermissionCodes.RoleView, "查看角色", "查看角色信息"),
+                new RolePermission(PermissionCodes.RoleEdit, "更新角色", "更新角色信息"),
+                new RolePermission(PermissionCodes.RoleDelete, "删除角色", "删除角色"),
             };
             
             var userPermissions = new List<RolePermission>
             {
-                new RolePermission(AppPermissions.UserRead, "查看用户", "查看用户信息"),
-                new RolePermission(AppPermissions.UserUpdate, "更新用户", "更新自己的用户信息")
+                new RolePermission(PermissionCodes.UserView, "查看用户", "查看用户信息"),
+                new RolePermission(PermissionCodes.UserEdit, "更新用户", "更新自己的用户信息")
             };
             
             var adminRole = new Role("管理员", "系统管理员", adminPermissions);
@@ -53,17 +51,15 @@ public static class SeedDatabaseExtension
                 PasswordHasher.HashPassword("123456"),
                 new List<UserRole> { new UserRole(adminRole.Id, adminRole.Name) },
                 new List<UserPermission> { 
-                    new UserPermission(AppPermissions.UserUpdate, adminRole.Id),
-                    new UserPermission(AppPermissions.UserRead, adminRole.Id),
-                    new UserPermission(AppPermissions.UserList, adminRole.Id),
-                    new UserPermission(AppPermissions.UserCreate, adminRole.Id),
-                    new UserPermission(AppPermissions.UserDelete, adminRole.Id),
-                    new UserPermission(AppPermissions.RoleCreate, adminRole.Id),
-                    new UserPermission(AppPermissions.RoleRead, adminRole.Id),
-                    new UserPermission(AppPermissions.RoleUpdate, adminRole.Id),
-                    new UserPermission(AppPermissions.RoleDelete, adminRole.Id),
-                    new UserPermission(AppPermissions.RoleList, adminRole.Id),
-                    new UserPermission(AppPermissions.UserRoleAssign, adminRole.Id),
+                    new UserPermission(PermissionCodes.UserEdit, adminRole.Id),
+                    new UserPermission(PermissionCodes.UserView, adminRole.Id),
+                    new UserPermission(PermissionCodes.UserCreate, adminRole.Id),
+                    new UserPermission(PermissionCodes.UserDelete, adminRole.Id),
+                    new UserPermission(PermissionCodes.RoleCreate, adminRole.Id),
+                    new UserPermission(PermissionCodes.RoleView, adminRole.Id),
+                    new UserPermission(PermissionCodes.RoleEdit, adminRole.Id),
+                    new UserPermission(PermissionCodes.RoleDelete, adminRole.Id),
+                    new UserPermission(PermissionCodes.UserRoleAssign, adminRole.Id),
                 },
                 "系统管理员",
                 1,
@@ -83,7 +79,7 @@ public static class SeedDatabaseExtension
                 "13800138001",
                 PasswordHasher.HashPassword("123456"),
                 new List<UserRole> { new UserRole(userRole.Id, userRole.Name) },
-                new List<UserPermission> { new UserPermission(AppPermissions.UserUpdate, userRole.Id) },
+                new List<UserPermission> { new UserPermission(PermissionCodes.UserEdit, userRole.Id) },
                 "测试用户",
                 1,
                 "test@example.com"

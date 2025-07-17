@@ -8,7 +8,7 @@ using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Commands;
 using Quiz.Exam.Web.Application.Commands.UserCommands;
 using Quiz.Exam.Web.Application.Queries;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 using Quiz.Exam.Web.Helper;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
@@ -36,7 +36,7 @@ public class UpdateUserEndpoint : Endpoint<UpdateUserRequest, ResponseData<Updat
         Put("/api/user/update");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         // FastEndpoints 会自动从 JWT claims 中验证权限
-        Permissions(AppPermissions.UserUpdate);
+        Permissions(PermissionCodes.UserEdit);
     }
 
     public override async Task HandleAsync(UpdateUserRequest request, CancellationToken ct)

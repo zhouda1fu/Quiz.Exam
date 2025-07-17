@@ -8,7 +8,7 @@ using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Commands;
 using Quiz.Exam.Web.Application.Commands.UserCommands;
 using Quiz.Exam.Web.Application.Queries;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 using Quiz.Exam.Web.Helper;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
@@ -35,7 +35,7 @@ public class UpdateUserRolesEndpoint : Endpoint<UpdateUserRolesRequest,ResponseD
     {
         Put("/api/users/update_roles");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
-        Permissions(AppPermissions.UserRoleAssign);
+        Permissions(PermissionCodes.UserRoleAssign);
     }
 
     public override async Task HandleAsync(UpdateUserRolesRequest request, CancellationToken ct)

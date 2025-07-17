@@ -5,7 +5,7 @@ using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Domain.AggregatesModel.UserAggregate;
 using Quiz.Exam.Web.Application.Queries;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
@@ -23,7 +23,7 @@ public class GetAllRoleEndpoint : Endpoint<RoleQueryInput, ResponseData<PagedDat
     {
         Get("/api/roles");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
-        Permissions(AppPermissions.RoleList);
+        Permissions(PermissionCodes.RoleView);
     }
 
     public override async Task HandleAsync(RoleQueryInput req, CancellationToken ct)

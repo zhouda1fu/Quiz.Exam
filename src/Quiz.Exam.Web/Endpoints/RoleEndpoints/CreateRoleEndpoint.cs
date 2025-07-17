@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Web.Application.Commands;
 using Quiz.Exam.Web.Application.Commands.RoleCommands;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
@@ -27,7 +27,7 @@ public class CreateRoleEndpoint : Endpoint<CreateRoleRequest, ResponseData<Creat
     {
         Post("/api/roles");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
-        Permissions(AppPermissions.RoleCreate);
+        Permissions(PermissionCodes.RoleCreate);
     }
 
     public override async Task HandleAsync(CreateRoleRequest req, CancellationToken ct)

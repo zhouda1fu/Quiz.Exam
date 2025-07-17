@@ -68,6 +68,7 @@
     <Folder Include="Authorization\" />
     <Folder Include="Controllers\" />
     <Folder Include="wwwroot\" />
+    <Folder Include="Permission\" />
   </ItemGroup>
 
 </Project>

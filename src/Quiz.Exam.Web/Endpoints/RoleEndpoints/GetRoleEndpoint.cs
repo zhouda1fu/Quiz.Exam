@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetCorePal.Extensions.Dto;
 using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 using Quiz.Exam.Web.Application.Queries;
-using Quiz.Exam.Web.Const;
+using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
 public record GetRoleRequest(RoleId RoleId);
 
-public record GetRoleResponse(RoleId Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime);
+public record GetRoleResponse(RoleId Id, string Name, string Description, bool IsActive, DateTimeOffset CreatedAt);
 
 [Tags("Roles")]
 public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResponse?>>
@@ -25,7 +25,7 @@ public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResp
     {
         Get("/api/roles/{roleId}");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
-        Permissions(AppPermissions.RoleRead);
+        Permissions(PermissionCodes.RoleView);
     }
 
     public override async Task HandleAsync(GetRoleRequest req, CancellationToken ct)
@@ -36,7 +36,7 @@ public class GetRoleEndpoint : Endpoint<GetRoleRequest, ResponseData<GetRoleResp
             roleInfo.Name,
             roleInfo.Description,
             roleInfo.IsActive,
-            roleInfo.CreatedTime
+            roleInfo.CreatedAt
         );
 
         await SendAsync(response.AsResponseData(), cancellation: ct);
