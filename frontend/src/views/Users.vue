@@ -264,7 +264,7 @@ const loadUsers = async () => {
     users.value = response.data.items
     pagination.total = response.data.total
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.message || '加载用户列表失败')
+    // 错误已在全局拦截器中处理
   } finally {
     loading.value = false
   }
@@ -278,7 +278,7 @@ const loadRoles = async () => {
     })
     allRoles.value = response.data.items
   } catch (error) {
-    ElMessage.error('加载角色列表失败')
+    // 错误已在全局拦截器中处理
   }
 }
 
@@ -361,7 +361,7 @@ const handleDelete = async (user: UserInfo) => {
     loadUsers()
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.response?.data?.message || '删除失败')
+      // 错误已在全局拦截器中处理
     }
   }
 }
@@ -384,7 +384,7 @@ const handleSubmit = async () => {
     dialogVisible.value = false
     loadUsers()
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.message || '操作失败')
+    // 错误已在全局拦截器中处理
   } finally {
     submitLoading.value = false
   }
@@ -403,7 +403,7 @@ const handleRoleSubmit = async () => {
     roleDialogVisible.value = false
     loadUsers()
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.message || '角色分配失败')
+    // 错误已在全局拦截器中处理
   } finally {
     roleSubmitLoading.value = false
   }

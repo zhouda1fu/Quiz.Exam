@@ -28,7 +28,17 @@ api.interceptors.request.use(
 // 响应拦截器
 api.interceptors.response.use(
   (response) => {
-    return response.data
+    if(response.data.success){
+      return response.data
+    }else{
+        // 处理后端返回的错误格式 {"success":false,"message":"不能删除管理员用户","code":0,"errorData":[]}
+        if (response.data && typeof response.data === 'object' && response.data.message) {
+          ElMessage.error(response.data.message)
+        } else {
+          ElMessage.error('请求失败')
+        }
+        return Promise.reject(response.data)
+    }
   },
   (error) => {
     if (error.response) {
