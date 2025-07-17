@@ -42,6 +42,8 @@ export interface CreateRoleRequest {
   permissionCodes: string[]
 }
 
+
+
 export interface CreateRoleResponse {
   roleId: string
   name: string
@@ -58,6 +60,12 @@ export interface UpdateRoleRequest {
   description: string
   permissionCodes: string[]
 }
+
+
+// 删除角色
+export const deleteRole = (roleId: string) => {
+  return api.delete(`/roles/${roleId}`)
+} 
 
 export const updateRole = (roleId: string, data: UpdateRoleRequest) => {
   return api.put(`/roles/${roleId}`, data)

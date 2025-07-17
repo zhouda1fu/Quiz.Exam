@@ -8,29 +8,29 @@ using Quiz.Exam.Web.Const;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
-public record DeleteUserRequest(UserId UserId);
 
-[Tags("Users")]
-public class DeleteUserEndpoint : Endpoint<DeleteUserRequest, ResponseData<bool>>
+[Tags("Roles")]
+public class DeleteRoleEndpoint : EndpointWithoutRequest<ResponseData<bool>>
 {
     private readonly IMediator _mediator;
 
-    public DeleteUserEndpoint(IMediator mediator)
+    public DeleteRoleEndpoint(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     public override void Configure()
     {
-        Delete("/api/users");
+        Delete("/api/roles/{roleId}");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         Permissions(AppPermissions.UserDelete);
     }
 
-    public override async Task HandleAsync(DeleteUserRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
-        var command = new DeleteUserCommand(req.UserId);
+        var roleId = Route<long>("roleId");
+        var command = new DeleteUserCommand(new UserId(roleId));
         await _mediator.Send(command, ct);
         await SendAsync(true.AsResponseData(), cancellation: ct);
     }
-} 
+}

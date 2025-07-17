@@ -23,6 +23,21 @@ namespace Quiz.Exam.Infrastructure.EntityConfigurations
             // 唯一索引
             builder.HasIndex(b => b.Name).IsUnique();
             builder.HasIndex(b => b.Email).IsUnique();
+
+            builder.HasMany(au => au.Roles)
+            .WithOne()
+            .HasForeignKey(aur => aur.UserId)
+            .OnDelete(DeleteBehavior.ClientCascade);
+            builder.Navigation(au => au.Roles).AutoInclude();
+
+            // 配置 AdminUser 与 AdminUserPermission 的一对多关系
+            builder.HasMany(au => au.Permissions)
+                .WithOne()
+                .HasForeignKey(aup => aup.UserId)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            builder.Navigation(au => au.Permissions).AutoInclude();
+
+            builder.HasQueryFilter(au => !au.IsDeleted);
         }
     }
 } 

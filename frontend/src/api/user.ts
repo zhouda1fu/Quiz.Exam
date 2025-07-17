@@ -64,6 +64,7 @@ export interface UpdateUserRequest {
   status: number
 }
 
+
 export const updateUser = (userId: string, data: UpdateUserRequest) => {
   return api.put(`/user/${userId}`, data)
 }
@@ -108,7 +109,10 @@ export const getUsers = (params: GetUsersRequest) => {
   return api.get<GetUsersResponse>('/users', { params })
 }
 
+
+
 // 删除用户
 export const deleteUser = (userId: string) => {
-  return api.delete(`/users/${userId}`)
+  return api.delete(`/users`, { data: { userId } })
 } 
+

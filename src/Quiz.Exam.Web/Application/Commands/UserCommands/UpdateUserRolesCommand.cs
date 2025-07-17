@@ -23,7 +23,7 @@ namespace Quiz.Exam.Web.Application.Commands.UserCommands
         public async Task Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
         {
             var adminUser = await userRepository.GetAsync(request.UserId, cancellationToken)
-                            ?? throw new KnownException($"未找到用户，AdminUserId = {request.UserId}");
+                            ?? throw new KnownException($"未找到用户，UserId = {request.UserId}");
 
             List<UserRole> roles = [];
             List<UserPermission> permissions = [];

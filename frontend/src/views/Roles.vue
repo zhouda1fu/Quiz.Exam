@@ -247,6 +247,7 @@ const handleDelete = async (role: RoleInfo) => {
       type: 'warning'
     })
     // TODO: 调用删除API
+    await deleteRole(role.roleId)
     ElMessage.success('删除成功')
     loadRoles()
   } catch {

@@ -21,7 +21,10 @@ internal class RoleEntityTypeConfiguration : IEntityTypeConfiguration<Role>
         
         // 唯一索引
         builder.HasIndex(b => b.Name).IsUnique();
-        
+
+        builder.HasMany(r => r.Permissions).WithOne().HasForeignKey(rp => rp.RoleId);
+        builder.Navigation(e => e.Permissions).AutoInclude();
+
         // 软删除过滤器
         builder.HasQueryFilter(b => !b.IsDeleted);
     }
