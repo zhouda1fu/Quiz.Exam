@@ -10,9 +10,9 @@ using Quiz.Exam.Web.Helper;
 
 namespace Quiz.Exam.Web.Application.Queries;
 
-public record UserInfo(UserId UserId, string Name, string Phone, IEnumerable<string> Roles, string RealName, int Status, string Email, DateTimeOffset CreatedAt);
+public record UserInfoQueryDto(UserId UserId, string Name, string Phone, IEnumerable<string> Roles, string RealName, int Status, string Email, DateTimeOffset CreatedAt);
 
-public record UserLoginInfo(UserId UserId, string Name, string Email, string PasswordHash);
+public record UserLoginInfoQueryDto(UserId UserId, string Name, string Email, string PasswordHash);
 
 public class UserQueryInput : PageRequest
 {
@@ -36,11 +36,11 @@ public class UserQuery(ApplicationDbContext applicationDbContext, IMemoryCache m
             .AnyAsync(u => u.Email == email, cancellationToken: cancellationToken);
     }
 
-    public async Task<UserInfo?> GetUserByIdAsync(UserId userId, CancellationToken cancellationToken)
+    public async Task<UserInfoQueryDto?> GetUserByIdAsync(UserId userId, CancellationToken cancellationToken)
     {
         return await UserSet.AsNoTracking()
             .Where(u => u.Id == userId)
-            .Select(au => new UserInfo(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName), au.RealName, au.Status, au.Email, au.CreatedAt))
+            .Select(au => new UserInfoQueryDto(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName), au.RealName, au.Status, au.Email, au.CreatedAt))
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -69,11 +69,11 @@ public class UserQuery(ApplicationDbContext applicationDbContext, IMemoryCache m
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<UserLoginInfo?> GetUserInfoForLoginAsync(string name, CancellationToken cancellationToken)
+    public async Task<UserLoginInfoQueryDto?> GetUserInfoForLoginAsync(string name, CancellationToken cancellationToken)
     {
         return await UserSet
         .Where(u => u.Name == name)
-        .Select(u => new UserLoginInfo(u.Id, u.Name, u.Email, u.PasswordHash))
+        .Select(u => new UserLoginInfoQueryDto(u.Id, u.Name, u.Email, u.PasswordHash))
         .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -87,7 +87,7 @@ public class UserQuery(ApplicationDbContext applicationDbContext, IMemoryCache m
         memoryCache.Remove(cacheKey);
     }
 
-    public async Task<PagedData<UserInfo>> GetAllUsersAsync(UserQueryInput query, CancellationToken cancellationToken)
+    public async Task<PagedData<UserInfoQueryDto>> GetAllUsersAsync(UserQueryInput query, CancellationToken cancellationToken)
     {
         var queryable = UserSet.AsNoTracking();
 
@@ -104,7 +104,7 @@ public class UserQuery(ApplicationDbContext applicationDbContext, IMemoryCache m
         return await queryable
             .OrderByDescending(u => u.CreatedAt)
             .Where(u => !u.IsDeleted)
-            .Select(u => new UserInfo(
+            .Select(u => new UserInfoQueryDto(
                 u.Id,
                 u.Name,
                 u.Phone,

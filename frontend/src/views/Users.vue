@@ -396,7 +396,7 @@ const handleRoleSubmit = async () => {
   try {
     roleSubmitLoading.value = true
     await updateUserRoles({
-      roleIds: selectedRoleIds.value.map(Number),
+      roleIds: selectedRoleIds.value,
       userId: currentUser.value.userId
     })
     ElMessage.success('角色分配成功')

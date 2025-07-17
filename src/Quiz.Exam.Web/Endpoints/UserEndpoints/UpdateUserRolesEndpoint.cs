@@ -33,7 +33,7 @@ public class UpdateUserRolesEndpoint : Endpoint<UpdateUserRolesRequest,ResponseD
 
     public override void Configure()
     {
-        Put("/api/user/update_roles");
+        Put("/api/users/update_roles");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         Permissions(AppPermissions.UserRoleAssign);
     }

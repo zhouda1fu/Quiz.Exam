@@ -6,7 +6,7 @@ namespace Quiz.Exam.Web.Application.Commands.UserCommands
 {
 
 
-    public record UpdateUserRolesCommand(UserId UserId, List<AssignAdminUserRoleDto> RolesToBeAssigned)
+    public record UpdateUserRolesCommand(UserId UserId, List<AssignAdminUserRoleQueryDto> RolesToBeAssigned)
     : ICommand;
 
     public class UpdateUserRolesCommandValidator : AbstractValidator<UpdateUserRolesCommand>

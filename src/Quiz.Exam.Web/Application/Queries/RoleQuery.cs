@@ -6,7 +6,7 @@ using Quiz.Exam.Infrastructure;
 
 namespace Quiz.Exam.Web.Application.Queries;
 
-public record RoleInfo(RoleId RoleId, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime, IEnumerable<string> PermissionCodes);
+public record RoleQueryDto(RoleId RoleId, string Name, string Description, bool IsActive, DateTimeOffset CreatedTime, IEnumerable<string> PermissionCodes);
 
 public class RoleQueryInput : PageRequest 
 {
@@ -16,7 +16,7 @@ public class RoleQueryInput : PageRequest
     public bool? IsActive { get; set; }
 }
 
-public record AssignAdminUserRoleDto(RoleId RoleId, string RoleName, IEnumerable<string> PermissionCodes);
+public record AssignAdminUserRoleQueryDto(RoleId RoleId, string RoleName, IEnumerable<string> PermissionCodes);
 
 public class RoleQuery(ApplicationDbContext applicationDbContext) : IQuery
 {
@@ -28,12 +28,12 @@ public class RoleQuery(ApplicationDbContext applicationDbContext) : IQuery
             .AnyAsync(r => r.Name == name, cancellationToken: cancellationToken);
     }
 
-    public async Task<List<AssignAdminUserRoleDto>> GetAdminRolesForAssignmentAsync(IEnumerable<RoleId> ids,
+    public async Task<List<AssignAdminUserRoleQueryDto>> GetAdminRolesForAssignmentAsync(IEnumerable<RoleId> ids,
     CancellationToken cancellationToken)
     {
         return await RoleSet.AsNoTracking()
             .Where(r => ids.Contains(r.Id))
-            .Select(r => new AssignAdminUserRoleDto(
+            .Select(r => new AssignAdminUserRoleQueryDto(
                 r.Id,
                 r.Name,
                 r.Permissions.Select(rp => rp.PermissionCode)))
@@ -41,15 +41,15 @@ public class RoleQuery(ApplicationDbContext applicationDbContext) : IQuery
     }
 
 
-    public async Task<RoleInfo?> GetRoleByIdAsync(RoleId id, CancellationToken cancellationToken = default)
+    public async Task<RoleQueryDto?> GetRoleByIdAsync(RoleId id, CancellationToken cancellationToken = default)
     {
         return await RoleSet.AsNoTracking()
             .Where(r => r.Id == id)
-            .Select(r => new RoleInfo(r.Id, r.Name, r.Description, r.IsActive, r.CreatedAt, r.Permissions.Select(rp => rp.PermissionCode)))
+            .Select(r => new RoleQueryDto(r.Id, r.Name, r.Description, r.IsActive, r.CreatedAt, r.Permissions.Select(rp => rp.PermissionCode)))
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<PagedData<RoleInfo>> GetAllRolesAsync(RoleQueryInput query,
+    public async Task<PagedData<RoleQueryDto>> GetAllRolesAsync(RoleQueryInput query,
     CancellationToken cancellationToken)
     {
         return await RoleSet.AsNoTracking()
@@ -57,7 +57,7 @@ public class RoleQuery(ApplicationDbContext applicationDbContext) : IQuery
             .WhereIf(!string.IsNullOrWhiteSpace(query.Description), r => r.Description.Contains(query.Description!))
             .WhereIf(query.IsActive.HasValue, r => r.IsActive == query.IsActive)
             .OrderBy(r => r.Id)
-            .Select(r => new RoleInfo(r.Id, r.Name,  r.Description, r.IsActive, r.CreatedAt, r.Permissions.Select(rp => rp.PermissionCode)))
+            .Select(r => new RoleQueryDto(r.Id, r.Name,  r.Description, r.IsActive, r.CreatedAt, r.Permissions.Select(rp => rp.PermissionCode)))
             .ToPagedDataAsync(query, cancellationToken);
     }
 

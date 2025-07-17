@@ -70,12 +70,12 @@ export const updateUser = (userId: string, data: UpdateUserRequest) => {
 
 // 更新用户角色
 export interface UpdateUserRolesRequest {
-  roleIds: number[],
+  roleIds: string[],
   userId: string
 }
 
 export const updateUserRoles = ( data: UpdateUserRolesRequest) => {
-  return api.put(`/user/update_roles`, data)
+  return api.put(`/users/update_roles`, data)
 }
 
 // 获取用户列表

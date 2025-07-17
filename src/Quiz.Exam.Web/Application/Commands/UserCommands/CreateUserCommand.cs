@@ -8,7 +8,7 @@ using Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 
 namespace Quiz.Exam.Web.Application.Commands.UserCommands;
 
-public record CreateUserCommand(string Name, string Email, string Password, string Phone, string RealName, int Status, IEnumerable<AssignAdminUserRoleDto> RolesToBeAssigned) : ICommand<UserId>;
+public record CreateUserCommand(string Name, string Email, string Password, string Phone, string RealName, int Status, IEnumerable<AssignAdminUserRoleQueryDto> RolesToBeAssigned) : ICommand<UserId>;
 
 public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {

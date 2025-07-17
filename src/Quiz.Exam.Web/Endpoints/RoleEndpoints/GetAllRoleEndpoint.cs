@@ -10,7 +10,7 @@ using Quiz.Exam.Web.Const;
 namespace Quiz.Exam.Web.Endpoints.RoleEndpoints;
 
 [Tags("Roles")]
-public class GetAllRoleEndpoint : Endpoint<RoleQueryInput, ResponseData<PagedData<RoleInfo>?>>
+public class GetAllRoleEndpoint : Endpoint<RoleQueryInput, ResponseData<PagedData<RoleQueryDto>?>>
 {
     private readonly RoleQuery _roleQuery;
 

@@ -22,7 +22,7 @@ public class DeleteUserEndpoint : Endpoint<DeleteUserRequest, ResponseData<bool>
 
     public override void Configure()
     {
-        Delete("/api/users/{userId}");
+        Delete("/api/users/delete");
         AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         Permissions(AppPermissions.UserDelete);
     }

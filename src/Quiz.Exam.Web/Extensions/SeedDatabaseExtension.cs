@@ -62,7 +62,8 @@ public static class SeedDatabaseExtension
                     new UserPermission(AppPermissions.RoleRead, adminRole.Id),
                     new UserPermission(AppPermissions.RoleUpdate, adminRole.Id),
                     new UserPermission(AppPermissions.RoleDelete, adminRole.Id),
-                    new UserPermission(AppPermissions.RoleList, adminRole.Id)
+                    new UserPermission(AppPermissions.RoleList, adminRole.Id),
+                    new UserPermission(AppPermissions.UserRoleAssign, adminRole.Id),
                 },
                 "系统管理员",
                 1,

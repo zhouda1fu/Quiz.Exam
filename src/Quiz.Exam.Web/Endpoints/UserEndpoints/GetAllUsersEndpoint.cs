@@ -14,7 +14,7 @@ public record GetAllUsersRequest
     public int? Status { get; set; }
 }
 
-public record GetAllUsersResponse(UserInfo[] Items, int Total, int PageIndex, int PageSize);
+public record GetAllUsersResponse(UserInfoQueryDto[] Items, int Total, int PageIndex, int PageSize);
 
 [Tags("Users")]
 public class GetAllUsersEndpoint : Endpoint<GetAllUsersRequest, ResponseData<GetAllUsersResponse>>
