@@ -314,6 +314,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { register, updateUser, updateUserRoles, getUsers, deleteUser, type RegisterRequest, type UserInfo } from '@/api/user'
 import { getAllRoles, type RoleInfo } from '@/api/role'
+import { hasPermission } from '@/utils/permission'
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -394,6 +395,12 @@ const loadUsers = async () => {
 }
 
 const loadRoles = async () => {
+  
+  // 检查是否有权限
+  if (!hasPermission(['RoleView'])) {
+  return
+  }
+
   try {
     const response = await getAllRoles({
       pageIndex: 1,
