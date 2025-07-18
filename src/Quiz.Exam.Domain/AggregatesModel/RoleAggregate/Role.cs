@@ -5,7 +5,27 @@ using System.Net.NetworkInformation;
 
 namespace Quiz.Exam.Domain.AggregatesModel.RoleAggregate;
 
-public partial record RoleId : IInt64StronglyTypedId;
+public partial record RoleId : IInt64StronglyTypedId 
+{
+
+    //强类型ID添加静态的TryParse方法，这样FastEndpoints就能自动将字符串路由参数转换为强类型ID。
+    public static bool TryParse(string? input, out RoleId output)
+    {
+        output = new RoleId(0);
+        if (string.IsNullOrEmpty(input))
+        {
+            return false;
+        }
+
+        if (long.TryParse(input, out var longValue))
+        {
+            output = new RoleId(longValue);
+            return true;
+        }
+
+        return false;
+    }
+}
 
 public class Role : Entity<RoleId>, IAggregateRoot
 {

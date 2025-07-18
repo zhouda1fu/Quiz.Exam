@@ -6,7 +6,27 @@ using System.Xml.Linq;
 
 namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
 {
-    public partial record UserId : IInt64StronglyTypedId;
+    public partial record UserId : IInt64StronglyTypedId 
+    {
+        //强类型ID添加静态的TryParse方法，这样FastEndpoints就能自动将字符串路由参数转换为强类型ID。
+        public static bool TryParse(string? input, out UserId output)
+        {
+            output = new UserId(0);
+
+            if (string.IsNullOrEmpty(input))
+            {
+                return false;
+            }
+
+            if (long.TryParse(input, out var longValue))
+            {
+                output = new UserId(longValue);
+                return true;
+            }
+
+            return false;
+        }
+    }
 
     public class User : Entity<UserId>, IAggregateRoot
     {
