@@ -14,7 +14,7 @@ using Quiz.Exam.Web.Helper;
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
 
-public record UpdateUserRequest(UserId UserId, string Name, string Email, string Password, string Phone, string RealName, int Status);
+public record UpdateUserRequest(UserId UserId, string Name, string Email, string Phone, string RealName, int Status);
 
 public record UpdateUserResponse(UserId UserId, string Name, string Email);
 
@@ -41,8 +41,8 @@ public class UpdateUserEndpoint : Endpoint<UpdateUserRequest, ResponseData<Updat
 
     public override async Task HandleAsync(UpdateUserRequest request, CancellationToken ct)
     {
-        var passwordHash = PasswordHasher.HashPassword(request.Password);
-        var cmd = new UpdateUserCommand(request.UserId, request.Name, request.Email, passwordHash, request.Phone, request.RealName, request.Status);
+        //var passwordHash = PasswordHasher.HashPassword(request.Password);
+        var cmd = new UpdateUserCommand(request.UserId, request.Name, request.Email, request.Phone, request.RealName, request.Status);
         var userId = await _mediator.Send(cmd, ct);
         var response = new UpdateUserResponse(
             userId,

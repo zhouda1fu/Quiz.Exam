@@ -57,6 +57,7 @@ export const getUserProfile = (userId: string) => {
 
 // 更新用户信息
 export interface UpdateUserRequest {
+  userId: string
   name: string
   email: string
   phone: string
@@ -65,8 +66,8 @@ export interface UpdateUserRequest {
 }
 
 
-export const updateUser = (userId: string, data: UpdateUserRequest) => {
-  return api.put(`/user/${userId}`, data)
+export const updateUser = ( data: UpdateUserRequest) => {
+  return api.put('/user/update', data)
 }
 
 // 更新用户角色

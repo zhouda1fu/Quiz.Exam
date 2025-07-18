@@ -6,7 +6,7 @@ namespace Quiz.Exam.Web.Application.Commands.UserCommands
 {
 
 
-    public record UpdateUserCommand(UserId UserId, string Name, string Email, string Password, string Phone, string RealName, int Status) : ICommand<UserId>;
+    public record UpdateUserCommand(UserId UserId, string Name, string Email,  string Phone, string RealName, int Status) : ICommand<UserId>;
 
     public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     {
@@ -14,11 +14,9 @@ namespace Quiz.Exam.Web.Application.Commands.UserCommands
         {
             RuleFor(u => u.Name).NotEmpty().WithMessage("用户名不能为空");
             RuleFor(u => u.Email).NotEmpty().EmailAddress().WithMessage("邮箱格式不正确");
-            RuleFor(u => u.Password).NotEmpty().WithMessage("密码不能为空");
-            RuleFor(u => u.Name).MustAsync(async (n, ct) => !await userQuery.DoesUserExist(n, ct))
-                .WithMessage(u => $"该用户已存在，Name={u.Name}");
-            RuleFor(u => u.Email).MustAsync(async (e, ct) => !await userQuery.DoesEmailExist(e, ct))
-                .WithMessage(u => $"该邮箱已存在，Email={u.Email}");
+           // RuleFor(u => u.Password).NotEmpty().WithMessage("密码不能为空");
+            //RuleFor(u => u.Email).MustAsync(async (e, ct) => !await userQuery.DoesEmailExist(e, ct))
+            //    .WithMessage(u => $"该邮箱已存在，Email={u.Email}");
         }
     }
 
@@ -33,7 +31,6 @@ namespace Quiz.Exam.Web.Application.Commands.UserCommands
             }
 
             user.UpdateUserInfo(request.Name, request.Phone,
-                request.Password,
                 request.RealName, request.Status, request.Email);
             return user.Id;
         }

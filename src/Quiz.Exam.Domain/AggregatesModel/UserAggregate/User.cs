@@ -69,11 +69,10 @@ namespace Quiz.Exam.Domain.AggregatesModel.UserAggregate
             DeletedAt = DateTimeOffset.Now;
         }
 
-        public void UpdateUserInfo(string name, string phone, string password, string realName, int status, string email)
+        public void UpdateUserInfo(string name, string phone, string realName, int status, string email)
         {
             Name = name;
             Phone = phone;
-            PasswordHash = password;
             RealName = realName;
             Status = status;
             Email = email;

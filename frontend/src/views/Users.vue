@@ -212,12 +212,12 @@
         
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="userForm.status" class="status-radio-group">
+            <el-icon size="16" color="#10b981"><CircleCheck /></el-icon>
             <el-radio :label="1" class="status-radio">
-              <el-icon size="16" color="#10b981"><CircleCheck /></el-icon>
               启用
             </el-radio>
+            <el-icon size="16" color="#ef4444"><CircleClose /></el-icon>
             <el-radio :label="0" class="status-radio">
-              <el-icon size="16" color="#ef4444"><CircleClose /></el-icon>
               禁用
             </el-radio>
           </el-radio-group>
@@ -472,7 +472,10 @@ const handleSubmit = async () => {
     submitLoading.value = true
     
     if (isEdit.value) {
-      await updateUser(currentUserId.value, userForm)
+      await updateUser({
+        userId: currentUserId.value,
+        ...userForm
+      })
       ElMessage.success('更新成功')
     } else {
       await register(userForm)
@@ -767,7 +770,7 @@ onMounted(() => {
 .status-radio {
   display: flex;
   align-items: center;
-  gap: 8px;
+  /* gap: 8px; */
   padding: 12px 16px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
