@@ -6,11 +6,14 @@ import { usePermissionStore } from './permission'
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string>(localStorage.getItem('token') || '')
   const refreshToken = ref<string>(localStorage.getItem('refreshToken') || '')
+  
+  // 从localStorage恢复用户信息
+  const userFromStorage = localStorage.getItem('user')
   const user = ref<{
     userId: string
     name: string
     email: string
-  } | null>(null)
+  } | null>(userFromStorage ? JSON.parse(userFromStorage) : null)
 
   const isAuthenticated = computed(() => !!token.value)
 
@@ -23,6 +26,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   const setUser = (userInfo: { userId: string; name: string; email: string }) => {
     user.value = userInfo
+    // 保存到localStorage
+    localStorage.setItem('user', JSON.stringify(userInfo))
   }
 
   const logout = () => {
@@ -31,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
+    localStorage.removeItem('user')
     
     // 清除权限
     const permissionStore = usePermissionStore()

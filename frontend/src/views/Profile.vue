@@ -111,7 +111,10 @@ const profileRules: FormRules = {
 }
 
 const loadUserProfile = async () => {
-  if (!authStore.user?.userId) return
+  if (!authStore.user?.userId) {
+    console.log('无法获取用户信息')
+    return
+  }
   
   try {
     const response = await getUserProfile(authStore.user.userId)
@@ -137,7 +140,10 @@ const handleUpdate = async () => {
     await profileFormRef.value.validate()
     loading.value = true
     
-    await updateUser(authStore.user.userId, profileForm)
+    await updateUser({
+      userId: authStore.user.userId,
+      ...profileForm
+    })
     ElMessage.success('更新成功')
     
     // 重新加载用户资料
@@ -166,8 +172,8 @@ const formatDate = (dateString?: string) => {
   return new Date(dateString).toLocaleString('zh-CN')
 }
 
-onMounted(() => {
-  loadUserProfile()
+onMounted(async () => {
+  await loadUserProfile()
 })
 </script>
 
