@@ -56,33 +56,5 @@ namespace Quiz.Exam.Web.AppPermissions
         /// 获取所有的权限组。
         /// </summary>
         public static IReadOnlyList<AppPermissionGroup> PermissionGroups => Groups.Values.ToImmutableList();
-
-        /// <summary>
-        /// 获取所有的权限。
-        /// </summary>
-        public static IReadOnlyList<AppPermission> AllPermissions
-        {
-            get
-            {
-                if (_allPermissions is not null) return _allPermissions;
-                var allPermissions = PermissionGroups.SelectMany(pg => pg.PermissionsWithChildren).ToImmutableList();
-                _allPermissions = allPermissions;
-                return _allPermissions;
-            }
-        }
-
-        private static IReadOnlyList<AppPermission>? _allPermissions;
-
-        /// <summary>
-        /// 根据权限码获取对应的权限。如果权限不存在，抛出异常。
-        /// </summary>
-        /// <param name="code">权限码</param>
-        /// <returns>返回对应的权限</returns>
-        /// <exception cref="KnownException">如果未找到权限，则抛出异常</exception>
-        public static AppPermission GetPermission(string code)
-        {
-            return AllPermissions.SingleOrDefault(p => p.Code == code) ??
-                   throw new KnownException($"Permission with code '{code}' was not found");
-        }
     }
 }

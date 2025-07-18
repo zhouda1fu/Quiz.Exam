@@ -43,47 +43,5 @@ namespace Quiz.Exam.Web.AppPermissions
             _permissions.Add(permission); // 将权限添加到权限组中
             return permission;
         }
-
-
-        private List<AppPermission>? _permissionsWithChildren;
-
-        /// <summary>
-        /// 当前权限组中的所有权限，包括子权限。
-        /// </summary>
-        public IReadOnlyList<AppPermission> PermissionsWithChildren
-        {
-            get
-            {
-                if (_permissionsWithChildren is not null)
-                {
-                    return _permissionsWithChildren;
-                }
-
-                var permissions = new List<AppPermission>();
-
-                foreach (var permission in _permissions)
-                {
-                    AddPermissionToListRecursively(permissions, permission);
-                }
-
-                _permissionsWithChildren = permissions;
-                return permissions.ToImmutableList();
-            }
-        }
-
-        /// <summary>
-        /// 递归地将权限及其子权限添加到列表中。
-        /// </summary>
-        /// <param name="permissions">目标权限列表。</param>
-        /// <param name="permission">当前权限。</param>
-        private static void AddPermissionToListRecursively(List<AppPermission> permissions, AppPermission permission)
-        {
-            permissions.Add(permission);
-
-            foreach (var child in permission.Children)
-            {
-                AddPermissionToListRecursively(permissions, child);
-            }
-        }
     }
 }
