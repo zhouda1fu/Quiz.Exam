@@ -6,10 +6,8 @@ using Quiz.Exam.Web.AppPermissions;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
-public record GetAllUsersRequest
+public class GetAllUsersRequest : PageRequest
 {
-    public int PageIndex { get; set; } = 1;
-    public int PageSize { get; set; } = 10;
     public string? Keyword { get; set; }
     public int? Status { get; set; }
 }
@@ -40,11 +38,12 @@ public class GetAllUsersEndpoint : Endpoint<GetAllUsersRequest, ResponseData<Get
             PageIndex = req.PageIndex,
             PageSize = req.PageSize,
             Keyword = req.Keyword,
-            Status = req.Status
+            Status = req.Status,
+            CountTotal = req.CountTotal
         };
-        
+
         var result = await _userQuery.GetAllUsersAsync(queryInput, ct);
-        
+
         var response = new GetAllUsersResponse(
             result.Items.ToArray(),
             result.Total,
@@ -54,4 +53,4 @@ public class GetAllUsersEndpoint : Endpoint<GetAllUsersRequest, ResponseData<Get
 
         await SendAsync(response.AsResponseData(), cancellation: ct);
     }
-} 
+}

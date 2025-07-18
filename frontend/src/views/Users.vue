@@ -357,7 +357,8 @@ const loadUsers = async () => {
       pageIndex: pagination.pageIndex,
       pageSize: pagination.pageSize,
       keyword: searchForm.keyword || undefined,
-      status: searchForm.status || undefined
+      status: searchForm.status || undefined,
+      countTotal:true
     })
     users.value = response.data.items
     pagination.total = response.data.total

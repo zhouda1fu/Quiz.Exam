@@ -306,7 +306,8 @@ const loadRoles = async () => {
     const response = await getAllRoles({
       pageIndex: pagination.pageIndex,
       pageSize: pagination.pageSize,
-      name: searchForm.keyword || undefined
+      name: searchForm.keyword || undefined,
+      countTotal:true
     })
     roles.value = response.data.items
     pagination.total = response.data.total

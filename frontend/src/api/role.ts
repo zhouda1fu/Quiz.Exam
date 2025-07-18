@@ -15,6 +15,7 @@ export interface RoleQueryInput {
   pageIndex: number
   pageSize: number
   name?: string
+  countTotal:boolean
 }
 
 // 分页数据

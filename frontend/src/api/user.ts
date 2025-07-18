@@ -86,6 +86,7 @@ export interface GetUsersRequest {
   pageSize: number
   keyword?: string
   status?: number
+  countTotal:boolean
 }
 
 export interface UserInfo {
