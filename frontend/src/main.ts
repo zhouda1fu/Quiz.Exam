@@ -8,6 +8,8 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import App from './App.vue'
 import router from './router'
 import './styles/global.css'
+import { permission } from './directives/permission'
+import { usePermissionStore } from './stores/permission'
 
 const app = createApp(App)
 
@@ -21,5 +23,12 @@ app.use(router)
 app.use(ElementPlus, {
   locale: zhCn,
 })
+
+// 注册权限指令
+app.directive('permission', permission)
+
+// 初始化权限
+const permissionStore = usePermissionStore()
+permissionStore.initPermissions()
 
 app.mount('#app') 

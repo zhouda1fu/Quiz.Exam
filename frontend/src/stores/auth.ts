@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { login as loginApi } from '@/api/user'
+import { usePermissionStore } from './permission'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string>(localStorage.getItem('token') || '')
@@ -30,15 +31,29 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
+    
+    // 清除权限
+    const permissionStore = usePermissionStore()
+    permissionStore.clearPermissions()
   }
 
   const login = async (username: string, password: string) => {
     try {
       const response = await loginApi({ username, password })
-      const { token: newToken, refreshToken: newRefreshToken, userId, name, email } = response.data
+      const { token: newToken, refreshToken: newRefreshToken, userId, name, email, permissions } = response.data
       
       setToken(newToken, newRefreshToken)
       setUser({ userId, name, email })
+      
+      // 解析权限信息
+      const permissionStore = usePermissionStore()
+      try {
+        const permissionsArray = JSON.parse(permissions || '[]')
+        permissionStore.setUserPermissions(permissionsArray)
+      } catch (error) {
+        console.error('解析用户权限失败:', error)
+        permissionStore.setUserPermissions([])
+      }
       
       return response
     } catch (error) {

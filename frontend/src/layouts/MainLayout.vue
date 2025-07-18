@@ -18,24 +18,17 @@
         text-color="#e1e5e9"
         active-text-color="#409EFF"
       >
-        <el-menu-item index="/" class="menu-item">
-          <el-icon><House /></el-icon>
+        <el-menu-item 
+          v-for="menu in permissionStore.getAuthorizedMenus" 
+          :key="menu.path"
+          :index="menu.path" 
+          class="menu-item"
+        >
+          <el-icon>
+            <component :is="menu.icon" />
+          </el-icon>
           <template #title>
-            <span class="menu-text">仪表盘</span>
-          </template>
-        </el-menu-item>
-        
-        <el-menu-item index="/users" class="menu-item">
-          <el-icon><User /></el-icon>
-          <template #title>
-            <span class="menu-text">用户管理</span>
-          </template>
-        </el-menu-item>
-        
-        <el-menu-item index="/roles" class="menu-item">
-          <el-icon><Setting /></el-icon>
-          <template #title>
-            <span class="menu-text">角色管理</span>
+            <span class="menu-text">{{ menu.name }}</span>
           </template>
         </el-menu-item>
       </el-menu>
@@ -93,7 +86,11 @@
                   <el-icon><User /></el-icon>
                   <span>个人资料</span>
                 </el-dropdown-item>
-                <el-dropdown-item command="settings" class="dropdown-item">
+                <el-dropdown-item 
+                  v-if="permissionStore.hasPermission(['SystemAdmin'])"
+                  command="settings" 
+                  class="dropdown-item"
+                >
                   <el-icon><Setting /></el-icon>
                   <span>系统设置</span>
                 </el-dropdown-item>
@@ -122,10 +119,12 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { usePermissionStore } from '@/stores/permission'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const permissionStore = usePermissionStore()
 
 const isCollapsed = ref(false)
 const isMobile = ref(false)
@@ -141,6 +140,13 @@ const getPageTitle = () => {
     'Roles': '角色管理',
     'Profile': '个人资料'
   }
+  
+  // 从权限菜单中查找对应的页面标题
+  const currentMenu = permissionStore.getAuthorizedMenus.find(menu => menu.path === route.path)
+  if (currentMenu) {
+    return currentMenu.name
+  }
+  
   return routeMap[route.name as string] || ''
 }
 
@@ -158,7 +164,11 @@ const handleCommand = async (command: string) => {
       router.push('/profile')
       break
     case 'settings':
-      ElMessage.info('系统设置功能开发中...')
+      if (permissionStore.hasPermission(['SystemAdmin'])) {
+        ElMessage.info('系统设置功能开发中...')
+      } else {
+        ElMessage.error('您没有访问系统设置的权限')
+      }
       break
     case 'logout':
       try {

@@ -6,7 +6,12 @@
         <h1 class="page-title">用户管理</h1>
         <p class="page-subtitle">管理系统中的所有用户账户和权限</p>
       </div>
-      <el-button type="primary" class="create-btn hover-button" @click="showCreateDialog">
+      <el-button 
+        v-permission="['UserCreate']"
+        type="primary" 
+        class="create-btn hover-button" 
+        @click="showCreateDialog"
+      >
         <el-icon><Plus /></el-icon>
         新建用户
       </el-button>
@@ -58,6 +63,7 @@
           <div class="header-right">
             <el-button 
               v-if="selectedUsers.length > 0"
+              v-permission="['UserDelete']"
               type="danger" 
               size="small"
               class="batch-delete-btn"
@@ -128,15 +134,33 @@
         <el-table-column label="操作" width="300" fixed="right">
           <template #default="{ row }">
             <div class="action-buttons">
-              <el-button size="small" type="primary" class="action-btn" @click="handleEdit(row)">
+              <el-button 
+                v-permission="['UserEdit']"
+                size="small" 
+                type="primary" 
+                class="action-btn" 
+                @click="handleEdit(row)"
+              >
                 <el-icon size="14"><Edit /></el-icon>
                 编辑
               </el-button>
-              <el-button size="small" type="warning" class="action-btn" @click="handleRoles(row)">
+              <el-button 
+                v-permission="['UserRoleAssign']"
+                size="small" 
+                type="warning" 
+                class="action-btn" 
+                @click="handleRoles(row)"
+              >
                 <el-icon size="14"><Setting /></el-icon>
                 角色
               </el-button>
-              <el-button size="small" type="danger" class="action-btn" @click="handleDelete(row)">
+              <el-button 
+                v-permission="['UserDelete']"
+                size="small" 
+                type="danger" 
+                class="action-btn" 
+                @click="handleDelete(row)"
+              >
                 <el-icon size="14"><Delete /></el-icon>
                 删除
               </el-button>
@@ -373,7 +397,8 @@ const loadRoles = async () => {
   try {
     const response = await getAllRoles({
       pageIndex: 1,
-      pageSize: 100
+      pageSize: 100,
+      countTotal: false
     })
     allRoles.value = response.data.items
   } catch (error) {

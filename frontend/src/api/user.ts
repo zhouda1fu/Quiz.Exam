@@ -12,6 +12,7 @@ export interface LoginResponse {
   userId: string
   name: string
   email: string
+  permissions: string
 }
 
 export const login = (data: LoginRequest) => {
@@ -116,5 +117,7 @@ export const getUsers = (params: GetUsersRequest) => {
 // 删除用户
 export const deleteUser = (userId: string) => {
   return api.delete(`/users`, { data: { userId } })
-} 
+}
+
+
 

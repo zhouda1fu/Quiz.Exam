@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { usePermissionStore } from '@/stores/permission'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -24,23 +25,27 @@ const router = createRouter({
         {
           path: '',
           name: 'Dashboard',
-          component: () => import('@/views/Dashboard.vue')
+          component: () => import('@/views/Dashboard.vue'),
+          meta: { permissions: ['SystemMonitor'] }
         },
         {
           path: 'users',
           name: 'Users',
-          component: () => import('@/views/Users.vue')
+          component: () => import('@/views/Users.vue'),
+          meta: { permissions: ['UserView', 'UserManagement'] }
         },
         {
           path: 'roles',
           name: 'Roles',
-          component: () => import('@/views/Roles.vue')
+          component: () => import('@/views/Roles.vue'),
+          meta: { permissions: ['RoleView', 'RoleManagement'] }
         },
         {
           path: 'profile',
           name: 'Profile',
           component: () => import('@/views/Profile.vue')
         }
+       
       ]
     }
   ]
@@ -49,14 +54,44 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+  const permissionStore = usePermissionStore()
   
+  // 如果访问登录页面且已认证，跳转到首页
+  if (to.path === '/login' && authStore.isAuthenticated) {
+    next('/')
+    return
+  }
+  
+  // 如果访问注册页面且已认证，跳转到首页
+  if (to.path === '/register' && authStore.isAuthenticated) {
+    next('/')
+    return
+  }
+  
+  // 如果需要认证但未认证，跳转到登录页面
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
-  } else if (to.path === '/login' && authStore.isAuthenticated) {
-    next('/')
-  } else {
-    next()
+    return
   }
+  
+  // 如果需要认证且已认证，检查页面权限
+  if (to.meta.requiresAuth && authStore.isAuthenticated) {
+    const requiredPermissions = to.meta.permissions as string[]
+    if (requiredPermissions && requiredPermissions.length > 0 && !permissionStore.hasPermission(requiredPermissions)) {
+      // 如果没有权限，尝试跳转到有权限的第一个菜单
+      const authorizedMenus = permissionStore.getAuthorizedMenus
+      if (authorizedMenus.length > 0) {
+        next(authorizedMenus[0].path)
+      } else {
+        // 如果没有任何权限，跳转到登录页面
+        authStore.logout()
+        next('/login')
+      }
+      return
+    }
+  }
+  
+  next()
 })
 
 export default router 

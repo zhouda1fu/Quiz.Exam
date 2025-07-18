@@ -26,7 +26,10 @@ public static class SeedDatabaseExtension
                 new RolePermission(PermissionCodes.RoleEdit, "更新角色", "更新角色信息"),
                 new RolePermission(PermissionCodes.RoleDelete, "删除角色", "删除角色"),
                 new RolePermission(PermissionCodes.UserRoleAssign, "分配用户角色", "分配用户角色权限"),
-                new RolePermission(PermissionCodes.RoleUpdatePermissions, "更新角色权限", "更新角色的权限")
+                new RolePermission(PermissionCodes.RoleUpdatePermissions, "更新角色权限", "更新角色的权限"),
+                //new RolePermission(PermissionCodes.SystemAdmin, "系统管理员权限", "拥有系统管理员权限"),
+                new RolePermission(PermissionCodes.SystemMonitor, "系统监控权限", "拥有系统监控权限")
+
             };
             
             var userPermissions = new List<RolePermission>
@@ -62,6 +65,8 @@ public static class SeedDatabaseExtension
                     new UserPermission(PermissionCodes.RoleEdit, adminRole.Id),
                     new UserPermission(PermissionCodes.RoleDelete, adminRole.Id),
                     new UserPermission(PermissionCodes.UserRoleAssign, adminRole.Id),
+                    //new UserPermission(PermissionCodes.SystemAdmin, adminRole.Id),
+                    new UserPermission(PermissionCodes.SystemMonitor, adminRole.Id),
                 },
                 "系统管理员",
                 1,

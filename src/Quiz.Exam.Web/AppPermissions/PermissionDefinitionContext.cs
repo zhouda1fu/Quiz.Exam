@@ -27,6 +27,11 @@ namespace Quiz.Exam.Web.AppPermissions
             roleManagement.AddChild(PermissionCodes.RoleDelete, "删除角色");
             roleManagement.AddChild(PermissionCodes.RoleView, "查看角色");
             roleManagement.AddChild(PermissionCodes.RoleUpdatePermissions, "更新角色权限");
+
+            //var systemAdmin = systemAccess.AddPermission(PermissionCodes.SystemAdmin, "系统管理员权限");
+            var systemMonitor = systemAccess.AddPermission(PermissionCodes.SystemMonitor, "系统监控");
+
+          
         }
 
         /// <summary>

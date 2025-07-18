@@ -15,12 +15,13 @@ using Quiz.Exam.Web.Configuration;
 using Quiz.Exam.Web.Const;
 using Quiz.Exam.Web.Helper;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Quiz.Exam.Web.Endpoints.UserEndpoints;
 
 public record LoginRequest(string Username, string Password);
 
-public record LoginResponse(string Token,string RefreshToken, UserId UserId, string Name, string Email);
+public record LoginResponse(string Token,string RefreshToken, UserId UserId, string Name, string Email,string Permissions);
 
 [Tags("Users")]
 public class LoginEndpoint : Endpoint<LoginRequest, ResponseData<LoginResponse>>
@@ -87,7 +88,8 @@ public class LoginEndpoint : Endpoint<LoginRequest, ResponseData<LoginResponse>>
             refreshToken,
             loginInfo.UserId,
             loginInfo.Name,
-            loginInfo.Email
+            loginInfo.Email,
+            JsonSerializer.Serialize(assignedPermissionCode)
         );
         await SendAsync(response.AsResponseData(), cancellation: ct);
     }
