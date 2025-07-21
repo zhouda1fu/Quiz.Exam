@@ -10,8 +10,8 @@
 
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
-    <PackageReference Include="NetCorePal.Extensions.Repository.EntityFrameworkCore" Version="$(NetCorePalVersion)" />
-    <PackageReference Include="NetCorePal.Extensions.Repository.EntityFrameworkCore.Snowflake" Version="$(NetCorePalVersion)" />
+    <PackageReference Include="NetCorePal.Extensions.Repository.EntityFrameworkCore" Version="2.9.0" />
+    <PackageReference Include="NetCorePal.Extensions.Repository.EntityFrameworkCore.Snowflake" Version="2.9.0" />
   </ItemGroup>
 
   <ItemGroup>
